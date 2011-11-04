@@ -1,0 +1,2 @@
+0 arguments: Returns the current line buffer size.
+1 argument (int): Changes the line buffer size of the console.

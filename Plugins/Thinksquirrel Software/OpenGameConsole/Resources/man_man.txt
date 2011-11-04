@@ -1,0 +1,2 @@
+0 arguments: Displays a list of commands.
+1 argument (command): Displays additional information about the command, if available.

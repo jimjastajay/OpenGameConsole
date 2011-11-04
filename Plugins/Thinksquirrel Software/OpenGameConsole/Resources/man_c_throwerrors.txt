@@ -1,0 +1,2 @@
+0 arguments: Returns the exception throwing status.
+1 argument (boolean): Sets exception throwing for the console.

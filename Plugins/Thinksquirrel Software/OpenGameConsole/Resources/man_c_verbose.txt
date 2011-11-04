@@ -1,0 +1,2 @@
+0 arguments: Returns the current verbose mode setting.
+1 argument (boolean): Sets verbose mode for the console.

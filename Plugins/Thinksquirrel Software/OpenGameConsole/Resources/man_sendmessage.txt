@@ -1,0 +1,1 @@
+2 arguments ('string',MethodName): Sends a message to the GameObject (specified between single quotes) with the name MethodName (without quotes)

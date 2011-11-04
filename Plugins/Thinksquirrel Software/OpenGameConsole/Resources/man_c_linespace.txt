@@ -1,0 +1,2 @@
+0 arguments: Returns the current line spacing.
+1 argument (int): Changes the line spacing of the console. 
