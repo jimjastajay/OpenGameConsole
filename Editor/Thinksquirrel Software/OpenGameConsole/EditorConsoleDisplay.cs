@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEditor;
-using ThinksquirrelSoftware.OpenGameConsole;
+using OpenGameConsole;
 using System.Collections;
 
 public class EditorConsoleDisplay : EditorWindow
