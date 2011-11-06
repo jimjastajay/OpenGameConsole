@@ -2,44 +2,44 @@
 <DictionaryWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Keys>
     <string>help</string>
-    <string>c_linespace</string>
-    <string>c_history</string>
-    <string>c_verbose</string>
     <string>c_buffer</string>
-    <string>c_throwerrors</string>
+    <string>c_history</string>
+    <string>print</string>
+    <string>c_linespace</string>
+    <string>listobjects</string>
     <string>clear</string>
     <string>log</string>
-    <string>print</string>
-    <string>memusage</string>
+    <string>c_verbose</string>
+    <string>gravity</string>
     <string>garbagecollect</string>
-    <string>listobjects</string>
+    <string>c_throwerrors</string>
     <string>sendmessage</string>
     <string>timescale</string>
-    <string>gravity</string>
+    <string>memusage</string>
     <string>loc</string>
     <string>move</string>
     <string>move_rb</string>
     <string>nyan</string>
   </Keys>
   <Values>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Help</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.LineSpace</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.History</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Verbose</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Buffer</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ThrowErrors</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Clear</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Log</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Print</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MemUsage</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.GarbageCollect</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ListObjects</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeScale</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Gravity</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Loc</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Move</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MoveRB</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.NyanCat</string>
+    <string>OpenGameConsole.CoreCommands.Help</string>
+    <string>OpenGameConsole.CoreCommands.Buffer</string>
+    <string>OpenGameConsole.CoreCommands.History</string>
+    <string>OpenGameConsole.CoreCommands.Print</string>
+    <string>OpenGameConsole.CoreCommands.LineSpace</string>
+    <string>OpenGameConsole.CoreCommands.ListObjects</string>
+    <string>OpenGameConsole.CoreCommands.Clear</string>
+    <string>OpenGameConsole.CoreCommands.Log</string>
+    <string>OpenGameConsole.CoreCommands.Verbose</string>
+    <string>OpenGameConsole.CoreCommands.Gravity</string>
+    <string>OpenGameConsole.CoreCommands.GarbageCollect</string>
+    <string>OpenGameConsole.CoreCommands.ThrowErrors</string>
+    <string>OpenGameConsole.CoreCommands.SendMessage</string>
+    <string>OpenGameConsole.CoreCommands.TimeScale</string>
+    <string>OpenGameConsole.CoreCommands.MemUsage</string>
+    <string>OpenGameConsole.CoreCommands.Loc</string>
+    <string>OpenGameConsole.CoreCommands.Move</string>
+    <string>OpenGameConsole.CoreCommands.MoveRB</string>
+    <string>OpenGameConsole.CoreCommands.NyanCat</string>
   </Values>
 </DictionaryWrapper>
