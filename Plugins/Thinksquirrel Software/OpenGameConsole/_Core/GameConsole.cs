@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ThinksquirrelSoftware.OpenGameConsole
+namespace OpenGameConsole
 {
 	public class GameConsole
 	{
@@ -822,50 +822,50 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			_inactiveAliases = new Dictionary<string, string>();
 			
 			// Help
-			AddCommand("help", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Help");
+			AddCommand("help", "OpenGameConsole.CoreCommands.Help");
 			AddAlias("man", "help");
 			
 			// Console settings
-			AddCommand("c_linespace", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.LineSpace");
-			AddCommand("c_history", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.History");
-			AddCommand("c_verbose", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Verbose");
-			AddCommand("c_buffer", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Buffer");
-			AddCommand("c_throwerrors", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ThrowErrors");
+			AddCommand("c_linespace", "OpenGameConsole.CoreCommands.LineSpace");
+			AddCommand("c_history", "OpenGameConsole.CoreCommands.History");
+			AddCommand("c_verbose", "OpenGameConsole.CoreCommands.Verbose");
+			AddCommand("c_buffer", "OpenGameConsole.CoreCommands.Buffer");
+			AddCommand("c_throwerrors", "OpenGameConsole.CoreCommands.ThrowErrors");
 			
 			// Clearing
-			AddCommand("clear", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Clear");
+			AddCommand("clear", "OpenGameConsole.CoreCommands.Clear");
 			AddAlias("clr", "clear");
 			AddAlias("cls", "clear");
 			
 			// Debugging
-			AddCommand("log", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Log");
-			AddCommand("print", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Print");
-			AddCommand("memusage", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MemUsage");
+			AddCommand("log", "OpenGameConsole.CoreCommands.Log");
+			AddCommand("print", "OpenGameConsole.CoreCommands.Print");
+			AddCommand("memusage", "OpenGameConsole.CoreCommands.MemUsage");
 			AddAlias("mem", "memusage");
-			AddCommand("garbagecollect", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.GarbageCollect");
+			AddCommand("garbagecollect", "OpenGameConsole.CoreCommands.GarbageCollect");
 			AddAlias("gc", "garbagecollect");
 		
 			// GameObject stuff
-			AddCommand("listobjects", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ListObjects");
+			AddCommand("listobjects", "OpenGameConsole.CoreCommands.ListObjects");
 			AddAlias("list", "listobjects");
 			AddAlias("ls", "listobjects");
 			AddAlias("li", "listobjects");
-			AddCommand("sendmessage", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage");
+			AddCommand("sendmessage", "OpenGameConsole.CoreCommands.SendMessage");
 			AddAlias("send", "sendmessage");
 			
 			// Physics
-			AddCommand("timescale", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeScale");
+			AddCommand("timescale", "OpenGameConsole.CoreCommands.TimeScale");
 			AddAlias("time", "timescale");
-			AddCommand("gravity", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Gravity");
+			AddCommand("gravity", "OpenGameConsole.CoreCommands.Gravity");
 			AddAlias("grav", "gravity");
-			AddCommand("loc", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Loc");
-			AddCommand("move", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Move");
+			AddCommand("loc", "OpenGameConsole.CoreCommands.Loc");
+			AddCommand("move", "OpenGameConsole.CoreCommands.Move");
 			AddAlias("mv", "move");
-			AddCommand("move_rb", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MoveRB");
+			AddCommand("move_rb", "OpenGameConsole.CoreCommands.MoveRB");
 			AddAlias("mv_rb", "move_rb");
 			
 			// Random
-			AddCommand("nyan", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.NyanCat");
+			AddCommand("nyan", "OpenGameConsole.CoreCommands.NyanCat");
 		}
 //#endif
 	

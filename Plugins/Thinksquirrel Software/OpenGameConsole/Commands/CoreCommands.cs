@@ -1,10 +1,11 @@
 using UnityEngine;
+using OpenGameConsole;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace ThinksquirrelSoftware.OpenGameConsole
+namespace OpenGameConsole
 {
 	public static class CoreCommands
 	{
