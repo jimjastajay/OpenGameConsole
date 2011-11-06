@@ -1,8 +1,8 @@
 using UnityEngine;
-using OpenGameConsole;
+using ThinksquirrelSoftware.OpenGameConsole;
 using System.Collections;
 
-public class ConsoleDisplay : MonoBehaviour
+public class RuntimeConsoleDisplay : MonoBehaviour
 {
 	public bool draggable = true;
 	public float consoleWidth = 500;

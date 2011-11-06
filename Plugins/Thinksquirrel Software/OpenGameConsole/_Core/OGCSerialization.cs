@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace ThinksquirrelSoftware.OpenGameConsole
+namespace OpenGameConsole
 {
 	public static class OGCSerialization
 	{
