@@ -1,25 +1,47 @@
 using UnityEngine;
-using UnityEditor;
 using ThinksquirrelSoftware.OpenGameConsole;
 using System.Collections;
 
-public class EditorConsoleDisplay : EditorWindow
+public class RuntimeConsoleDisplay : MonoBehaviour
 {
+	public bool draggable = true;
+	public float consoleWidth = 500;
+	public float consoleHeight = 200;
+	public GUISkin guiSkin;
 	private Rect windowRect;
 	private Vector2 scrollPosition;
 	private string currentText = "";
 	private int commandPointer = - 1;
+	private bool awake = false;
 	
-	[MenuItem ("Window/OpenGameConsole")]
-    static void Init()
+	private Rect ClampToScreen(Rect r)
 	{
-		EditorWindow.GetWindow(typeof(EditorConsoleDisplay), false, "OGC Terminal");
+		r.x = Mathf.Clamp(r.x, 0, Screen.width - r.width);
+		r.y = Mathf.Clamp(r.y, 0, Screen.height - r.height);
+		return r;
 	}
 	
+	void OnEnable()
+	{
+		awake = true;
+	}
+
 	void OnGUI()
 	{
+		GUISkin lastSkin = GUI.skin;
+		
+		GUI.skin = guiSkin;
+		
+		windowRect = ClampToScreen(GUILayout.Window(
+        0, windowRect, ConsoleWindow, "Console", GUILayout.Width(consoleWidth), GUILayout.Height(consoleHeight)));
+	
+		GUI.skin = lastSkin;
+	}
+	
+	void ConsoleWindow(int windowID)
+	{
 		scrollPosition = GUILayout.BeginScrollView(
-        scrollPosition, GUILayout.Width(position.width), GUILayout.Height(position.height - 25));
+        scrollPosition, GUILayout.Width(consoleWidth), GUILayout.Height(consoleHeight));
 		
 		GUILayout.Label(GameConsole.instance.stream);
 		
@@ -28,13 +50,8 @@ public class EditorConsoleDisplay : EditorWindow
 		GUI.SetNextControlName("Current Text");
 		
 		GUILayout.BeginHorizontal();
-		
-		string[] path = EditorApplication.currentScene.Split('/');
-		string scene = path[path.Length - 1];
-		scene = scene.Remove(scene.Length - 6);
-		
 		GUILayout.Label(
-			scene +
+			Application.loadedLevelName +
 			"@" + Application.platform.ToString() +
 			":" + GameConsole.instance.contextString +
 			"# >", GUILayout.ExpandWidth(false));
@@ -42,7 +59,6 @@ public class EditorConsoleDisplay : EditorWindow
 		GUILayout.EndHorizontal();
 		if (Event.current != null)
 		{	
-			Repaint();
 			if (Event.current.keyCode == KeyCode.UpArrow && Event.current.type == EventType.KeyUp)
 			{
 				if (GameConsole.instance.commandHistory.Count > 0)
@@ -82,6 +98,18 @@ public class EditorConsoleDisplay : EditorWindow
 				scrollPosition += Vector2.up * 5000f;
 				currentText = "";
 			}
-		}	
+			if (Event.current.keyCode == KeyCode.Escape && Event.current.type == EventType.KeyUp)
+				this.enabled = false;
+		}
+		
+		if (awake)
+		{
+			GUI.FocusWindow(0);
+			GUI.FocusControl("Current Text");
+			awake = false;
+		}
+			
+		if (draggable)
+			GUI.DragWindow();
 	}
 }

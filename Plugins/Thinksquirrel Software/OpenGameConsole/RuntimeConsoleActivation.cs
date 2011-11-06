@@ -5,7 +5,7 @@ public class ConsoleActivation : MonoBehaviour
 {
 	
 	public KeyCode activationKey = KeyCode.BackQuote;
-	public ConsoleDisplay consoleDisplay;
+	public RuntimeConsoleDisplay consoleDisplay;
 
 	void Update()
 	{
