@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
-public class ConsoleActivation : MonoBehaviour
+public class RuntimeConsoleActivation : MonoBehaviour
 {
 	
 	public KeyCode activationKey = KeyCode.BackQuote;
-	public ConsoleDisplay consoleDisplay;
+	public RuntimeConsoleDisplay consoleDisplay;
 
 	void Update()
 	{
