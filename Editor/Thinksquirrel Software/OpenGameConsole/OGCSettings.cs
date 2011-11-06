@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using ThinksquirrelSoftware.OpenGameConsole;
+using ThinksquirrelSoftware.OpenGameConsole.Utility;
 using System.Collections;
 using System.Collections.Generic;
 

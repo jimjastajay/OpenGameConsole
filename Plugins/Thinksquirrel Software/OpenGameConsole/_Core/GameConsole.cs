@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Collections;
 using System.Collections.Generic;
+using ThinksquirrelSoftware.OpenGameConsole.Utility;
 
 namespace ThinksquirrelSoftware.OpenGameConsole
 {

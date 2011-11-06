@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace ThinksquirrelSoftware.OpenGameConsole
+namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 {
 	public class DictionaryWrapper
 	{ 
