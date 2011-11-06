@@ -13,7 +13,7 @@ public class EditorConsoleDisplay : EditorWindow
 	[MenuItem ("Window/OpenGameConsole")]
     static void Init()
 	{
-		EditorWindow.GetWindow(typeof(EditorConsoleDisplay), false, "OGC");
+		EditorWindow.GetWindow(typeof(EditorConsoleDisplay), false, "OGC Terminal");
 	}
 	
 	void OnGUI()
@@ -28,8 +28,13 @@ public class EditorConsoleDisplay : EditorWindow
 		GUI.SetNextControlName("Current Text");
 		
 		GUILayout.BeginHorizontal();
+		
+		string[] path = EditorApplication.currentScene.Split('/');
+		string scene = path[path.Length - 1];
+		scene = scene.Remove(scene.Length - 6);
+		
 		GUILayout.Label(
-			Application.loadedLevelName +
+			scene +
 			"@" + Application.platform.ToString() +
 			":" + GameConsole.instance.contextString +
 			"# >", GUILayout.ExpandWidth(false));
@@ -37,6 +42,7 @@ public class EditorConsoleDisplay : EditorWindow
 		GUILayout.EndHorizontal();
 		if (Event.current != null)
 		{	
+			Repaint();
 			if (Event.current.keyCode == KeyCode.UpArrow && Event.current.type == EventType.KeyUp)
 			{
 				if (GameConsole.instance.commandHistory.Count > 0)
@@ -75,7 +81,6 @@ public class EditorConsoleDisplay : EditorWindow
 				GameConsole.instance.Input(currentText);
 				scrollPosition += Vector2.up * 5000f;
 				currentText = "";
-				Repaint();
 			}
 		}	
 	}

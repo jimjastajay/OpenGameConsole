@@ -27,6 +27,28 @@ namespace OpenGameConsole
 		private Dictionary<string, Func<string[], string>> _activeConsoleCommands = new Dictionary<string, Func<string[], string>>();
 		private Dictionary<string, Func<string[], string>> _inactiveConsoleCommands = new Dictionary<string, Func<string[], string>>();
 
+#if UNITY_EDITOR
+		
+		// In string format - for security reasons this should only be visible in the editor.
+		private Dictionary<string, string> _activeConsoleCommandsEDITOR = new Dictionary<string, string>();
+		private Dictionary<string, string> _inactiveConsoleCommandsEDITOR = new Dictionary<string, string>();
+		
+		public Dictionary<string, string> activeConsoleCommandsEDITOR
+		{
+			get
+			{
+				return this._activeConsoleCommandsEDITOR;
+			}
+		}
+		
+		public Dictionary<string, string> inactiveConsoleCommandsEDITOR
+		{
+			get
+			{
+				return this._inactiveConsoleCommandsEDITOR;
+			}
+		}
+#endif		
 		public Dictionary<string, Func<string[], string>> activeConsoleCommands
 		{
 			get
@@ -47,7 +69,7 @@ namespace OpenGameConsole
 		GameConsole()
 		{
 			_instance = this;
-			LoadDefaults();
+			OGCSerialization.LoadData();
 			context = null;
 		}
 		
@@ -363,20 +385,28 @@ namespace OpenGameConsole
 				}	
 			}
 			
-			// Static Methods
-			string typeName = fullMethodName.Remove(fullMethodName.LastIndexOf('.'));
-			
-			var input = Expression.Parameter(typeof(string[]), "input");
-			var methodInfo = Type.GetType(typeName).GetMethod(methodName);
-	
-			if (methodInfo == null ||
-	            methodInfo.ReturnType != typeof(string) ||
-	            methodInfo.GetParameters().Length != 1)
+			try
 			{
-				throw new ArgumentException();
+				// Static Methods
+				string typeName = fullMethodName.Remove(fullMethodName.LastIndexOf('.'));
+				
+				var input = Expression.Parameter(typeof(string[]), "input");
+				var methodInfo = Type.GetType(typeName).GetMethod(methodName);
+		
+				if (methodInfo == null ||
+		            methodInfo.ReturnType != typeof(string) ||
+		            methodInfo.GetParameters().Length != 1)
+				{
+					throw ex2;
+				}
+				
+				return Expression.Lambda<Func<string[], string>>(Expression.Call(null, methodInfo, input), input).Compile();
+			}
+			catch
+			{
+				throw ex2;
 			}
 			
-			return Expression.Lambda<Func<string[], string>>(Expression.Call(null, methodInfo, input), input).Compile();
 		}
 		
 		/// <summary>
@@ -399,6 +429,38 @@ namespace OpenGameConsole
 				throw new ArgumentException("GameConsole: Command error/already exists");
 			}
 			_activeConsoleCommands.Add(commandName, GetCommand(command));
+#if UNITY_EDITOR
+			_activeConsoleCommandsEDITOR.Add(commandName, command);
+#endif
+		}
+		
+		/// <summary>
+		/// Activates/Deactivates a console command. Editor only.
+		/// </summary>
+		public void ToggleCommand(string commandName)
+		{
+			if (_activeConsoleCommands.ContainsKey(commandName))
+			{
+				_inactiveConsoleCommands.Add(commandName, _activeConsoleCommands[commandName]);
+				_activeConsoleCommands.Remove(commandName);
+#if UNITY_EDITOR
+				_inactiveConsoleCommandsEDITOR.Add(commandName, _activeConsoleCommandsEDITOR[commandName]);
+				_activeConsoleCommandsEDITOR.Remove(commandName);
+#endif	
+			}
+			else if (_inactiveConsoleCommands.ContainsKey(commandName))
+			{
+				_activeConsoleCommands.Add(commandName, _inactiveConsoleCommands[commandName]);
+				_inactiveConsoleCommands.Remove(commandName);
+#if UNITY_EDITOR
+				_activeConsoleCommandsEDITOR.Add(commandName, _inactiveConsoleCommandsEDITOR[commandName]);
+				_inactiveConsoleCommandsEDITOR.Remove(commandName);
+#endif
+			}
+			else
+			{
+				throw new ArgumentException("GameConsole: Command not found");
+			}
 		}
 		
 		/// <summary>
@@ -406,13 +468,19 @@ namespace OpenGameConsole
 		/// </summary>
 		public void RemoveCommand(string commandName)
 		{
-			if (_inactiveConsoleCommands.ContainsKey(commandName))
+			if (_activeConsoleCommands.ContainsKey(commandName))
 			{
 				_activeConsoleCommands.Remove(commandName);
+#if UNITY_EDITOR
+				_activeConsoleCommandsEDITOR.Remove(commandName);
+#endif
 			}
 			else if (_inactiveConsoleCommands.ContainsKey(commandName))
 			{
 				_inactiveConsoleCommands.Remove(commandName);
+#if UNITY_EDITOR
+				_inactiveConsoleCommandsEDITOR.Remove(commandName);
+#endif
 			}
 			else
 			{
@@ -468,6 +536,7 @@ namespace OpenGameConsole
 				}
 				else if (command.Contains("cd"))
 				{
+					Echo(s, true);
 					ChangeContext(args);
 				}
 			}
@@ -546,7 +615,6 @@ namespace OpenGameConsole
 		
 		void ChangeContext_Process(string result, string arg)
 		{
-			Debug.Log(result);
 			try
 			{
 				if (context == null && !result.StartsWith("/"))
