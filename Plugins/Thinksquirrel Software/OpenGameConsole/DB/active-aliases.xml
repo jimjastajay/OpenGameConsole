@@ -4,14 +4,14 @@
     <string>man</string>
     <string>clr</string>
     <string>cls</string>
-    <string>mem</string>
+    <string>li</string>
     <string>gc</string>
     <string>list</string>
-    <string>ls</string>
-    <string>li</string>
+    <string>grav</string>
+    <string>mem</string>
     <string>send</string>
     <string>time</string>
-    <string>grav</string>
+    <string>ls</string>
     <string>mv</string>
     <string>mv_rb</string>
   </Keys>
@@ -19,14 +19,14 @@
     <string>help</string>
     <string>clear</string>
     <string>clear</string>
-    <string>memusage</string>
+    <string>listobjects</string>
     <string>garbagecollect</string>
     <string>listobjects</string>
-    <string>listobjects</string>
-    <string>listobjects</string>
+    <string>gravity</string>
+    <string>memusage</string>
     <string>sendmessage</string>
     <string>timescale</string>
-    <string>gravity</string>
+    <string>listobjects</string>
     <string>move</string>
     <string>move_rb</string>
   </Values>

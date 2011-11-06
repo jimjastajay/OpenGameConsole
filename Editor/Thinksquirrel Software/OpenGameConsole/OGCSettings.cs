@@ -12,9 +12,13 @@ public class OGCSettings : EditorWindow
 	private string newKey = "New Command";
 	private string newValue = "Method Name";
 	private string newAliasKey = "New Alias";
+	private string manPage = "";
+	private string oldManPage = "";
 	private Rect windowRect = new Rect(100, 100, 300, 200);
 	private Rect areaRect;
 	private Vector2 aScrollPosition;
+	private bool activeFoldout = true;
+	private bool inactiveFoldout = true;
 	
 	[MenuItem ("Window/OpenGameConsole Settings")]
     static void Init()
@@ -31,6 +35,7 @@ public class OGCSettings : EditorWindow
 	
 	void OnGUI()
 	{
+		this.minSize = new Vector2(500, 350);
 		if (Event.current != null)
 		{	
 			Repaint();
@@ -44,83 +49,97 @@ public class OGCSettings : EditorWindow
 		string key = "";
 		
 		GUILayout.Space(4);
-		GUILayout.Label("Active Console Commands:");
-		GUILayout.Space(4);
-		foreach (KeyValuePair<string, string> kvp in GameConsole.instance.activeConsoleCommandsEDITOR)
+		activeFoldout = EditorGUILayout.Foldout(activeFoldout, "Active Console Commands:");
+		if (activeFoldout)
 		{
+			GUILayout.Space(4);
+			foreach (KeyValuePair<string, string> kvp in GameConsole.instance.activeConsoleCommandsEDITOR)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Label(kvp.Key, GUILayout.Width(100));
+				GUILayout.Label(kvp.Value);
+				if (GameConsole.instance.activeAliases.ContainsValue(kvp.Key) ||
+					GameConsole.instance.inactiveAliases.ContainsValue(kvp.Key))
+				{
+					GUI.color = Color.cyan;
+				}
+				if (GUILayout.Button("i", GUILayout.Width(25)))
+				{
+					aliasWindow = true;
+					aliasKey = kvp.Key;
+					manPage = OGCSerialization.LoadManPage(aliasKey);
+					oldManPage = manPage;
+					AssetDatabase.Refresh();
+				}
+				GUI.color = Color.yellow;
+				if (GUILayout.Button("-", GUILayout.Width(25)))
+				{
+					toggleCommand = true;
+					key = kvp.Key;
+				}
+				GUI.color = Color.red;
+				if (GUILayout.Button("x", GUILayout.Width(25)))
+				{
+					removeCommand = true;
+					key = kvp.Key;
+				}
+				GUI.color = Color.white;
+				GUILayout.EndHorizontal();
+			}
+			
 			GUILayout.BeginHorizontal();
-			GUILayout.Label(kvp.Key, GUILayout.Width(100));
-			GUILayout.Label(kvp.Value);
-			if (GameConsole.instance.activeAliases.ContainsValue(kvp.Key) ||
-				GameConsole.instance.inactiveAliases.ContainsValue(kvp.Key))
-			{
-				GUI.color = Color.cyan;
-			}
-			if (GUILayout.Button("A", GUILayout.Width(25)))
-			{
-				aliasWindow = true;
-				aliasKey = kvp.Key;
-			}
-			GUI.color = Color.yellow;
-			if (GUILayout.Button("-", GUILayout.Width(25)))
-			{
-				toggleCommand = true;
-				key = kvp.Key;
-			}
-			GUI.color = Color.red;
-			if (GUILayout.Button("x", GUILayout.Width(25)))
-			{
-				removeCommand = true;
-				key = kvp.Key;
-			}
-			GUI.color = Color.white;
-			GUILayout.EndHorizontal();
-		}
-		
-		GUILayout.BeginHorizontal();
-		
-		newKey = GUILayout.TextField(newKey, GUILayout.Width(100));
-		newValue = GUILayout.TextField(newValue);
-		GUI.color = Color.green;
-		if (GUILayout.Button("++", GUILayout.Width(84)))
-		{
-			GameConsole.instance.AddCommand(newKey, newValue);
-		}
-		GUI.color = Color.white;
-		GUILayout.EndHorizontal();
-		
-		GUILayout.Space(4);
-		GUILayout.Label("Inactive Console Commands:");
-		GUILayout.Space(4);
-		foreach (KeyValuePair<string, string> kvp in GameConsole.instance.inactiveConsoleCommandsEDITOR)
-		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label(kvp.Key, GUILayout.Width(100));
-			GUILayout.Label(kvp.Value);
-			if (GameConsole.instance.activeAliases.ContainsValue(kvp.Key) ||
-				GameConsole.instance.inactiveAliases.ContainsValue(kvp.Key))
-			{
-				GUI.color = Color.cyan;
-			}
-			if (GUILayout.Button("A", GUILayout.Width(25)))
-			{
-				aliasWindow = true;
-				aliasKey = kvp.Key;
-			}
+			
+			newKey = GUILayout.TextField(newKey, GUILayout.Width(100));
+			newValue = GUILayout.TextField(newValue);
 			GUI.color = Color.green;
-			if (GUILayout.Button("+", GUILayout.Width(25)))
+			if (GUILayout.Button("Add", GUILayout.Width(84)))
 			{
-				toggleCommand = true;
-				key = kvp.Key;
-			}
-			GUI.color = Color.red;
-			if (GUILayout.Button("x", GUILayout.Width(25)))
-			{
-				removeCommand = true;
-				key = kvp.Key;
+				GameConsole.instance.AddCommand(newKey, newValue);
+				newKey = "New Command";
+				newValue = "Method Name";
 			}
 			GUI.color = Color.white;
 			GUILayout.EndHorizontal();
+		}
+		
+		GUILayout.Space(4);
+		inactiveFoldout = EditorGUILayout.Foldout(inactiveFoldout, "Inactive Console Commands:");
+		if (inactiveFoldout)
+		{
+			GUILayout.Space(4);
+			foreach (KeyValuePair<string, string> kvp in GameConsole.instance.inactiveConsoleCommandsEDITOR)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Label(kvp.Key, GUILayout.Width(100));
+				GUILayout.Label(kvp.Value);
+				if (GameConsole.instance.activeAliases.ContainsValue(kvp.Key) ||
+					GameConsole.instance.inactiveAliases.ContainsValue(kvp.Key))
+				{
+					GUI.color = Color.cyan;
+				}
+				if (GUILayout.Button("i", GUILayout.Width(25)))
+				{
+					aliasWindow = true;
+					aliasKey = kvp.Key;
+					manPage = OGCSerialization.LoadManPage(aliasKey);
+					oldManPage = manPage;
+					AssetDatabase.Refresh();
+				}
+				GUI.color = Color.green;
+				if (GUILayout.Button("+", GUILayout.Width(25)))
+				{
+					toggleCommand = true;
+					key = kvp.Key;
+				}
+				GUI.color = Color.red;
+				if (GUILayout.Button("x", GUILayout.Width(25)))
+				{
+					removeCommand = true;
+					key = kvp.Key;
+				}
+				GUI.color = Color.white;
+				GUILayout.EndHorizontal();
+			}
 		}
 		
 		if (toggleCommand)
@@ -154,7 +173,7 @@ public class OGCSettings : EditorWindow
 			BeginWindows();
 			
 			// All GUI.Window or GUILayout.Window must come inside here
-			windowRect = ClampToParentWindow(GUILayout.Window(1, windowRect, DoWindow, "Aliases: " + aliasKey), position);        
+			windowRect = ClampToParentWindow(GUILayout.Window(1, windowRect, DoWindow, aliasKey), position);        
 			
 			// Collect all the windows between the two.
 			EndWindows();
@@ -170,6 +189,10 @@ public class OGCSettings : EditorWindow
 		bool removeAlias = false;
 		string key = "";
 		
+		GUILayout.BeginHorizontal();
+		GUILayout.BeginVertical();
+		GUILayout.Label("Aliases:");
+		GUILayout.Space(4);
 		foreach (KeyValuePair<string, string> kvp in GameConsole.instance.activeAliases)
 		{
 			if (kvp.Value == aliasKey)
@@ -208,15 +231,39 @@ public class OGCSettings : EditorWindow
 		if (GUILayout.Button("+", GUILayout.Width(25)))
 		{
 			GameConsole.instance.AddAlias(newAliasKey, aliasKey);
+			newAliasKey = "New Alias";
 		}
 		GUI.color = Color.white;
+		GUILayout.EndHorizontal();
+		GUILayout.EndVertical();
+		GUILayout.BeginVertical();
+		GUILayout.Label("Help Text:");
+		GUILayout.Space(4);
+		manPage = GUILayout.TextArea(manPage, GUILayout.MinWidth(300), GUILayout.MinHeight(200));
+		GUILayout.BeginHorizontal();
+		if (manPage == oldManPage)
+		{
+			GUI.enabled = false;
+		}
+		if (GUILayout.Button("Apply"))
+		{
+			OGCSerialization.SaveManPage(aliasKey, manPage);
+			oldManPage = manPage;
+			AssetDatabase.Refresh();
+		}
+		if (GUILayout.Button("Revert"))
+		{
+			manPage = OGCSerialization.LoadManPage(aliasKey);
+		}
+		GUI.enabled = true;
+		GUILayout.EndHorizontal();
+		GUILayout.EndVertical();
 		GUILayout.EndHorizontal();
 		
 		if (GUILayout.Button("Close"))
 		{
 			aliasWindow = false;
 		}
-		
 		GUILayout.EndVertical();
 		GUI.DragWindow(); 
 		

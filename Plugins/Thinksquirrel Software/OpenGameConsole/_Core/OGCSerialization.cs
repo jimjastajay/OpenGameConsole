@@ -93,5 +93,47 @@ namespace OpenGameConsole
 				Debug.LogError("OpenGameConsole: Unable to load data!");
 			}
 		}
+	
+		public static void SaveManPage(string command, string text)
+		{
+			try
+			{
+				StreamWriter sw = new StreamWriter(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/Resources/man_" + command + ".txt");
+				sw.Write(text);
+				sw.Close();
+			}
+			catch
+			{
+				Debug.LogError("OpenGameConsole: Unable to save/create manual page!");
+			}
+		}
+		
+		public static string LoadManPage(string command)
+		{
+			StreamReader sr;
+			try
+			{
+				sr = new StreamReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/Resources/man_" + command + ".txt");
+				string s = sr.ReadToEnd();
+				sr.Close();
+				return s;
+			}
+			catch
+			{
+				SaveManPage(command, "");
+				try
+				{
+					sr = new StreamReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/Resources/man_" + command + ".txt");
+					string s = sr.ReadToEnd();
+					sr.Close();
+					return s;
+				}
+				catch
+				{
+					Debug.LogError("OpenGameConsole: Unable to read manual page!");
+					return "";
+				}
+			}
+		}
 	}
 }
