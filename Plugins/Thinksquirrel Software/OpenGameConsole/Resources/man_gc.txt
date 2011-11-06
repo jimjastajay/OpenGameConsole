@@ -1,1 +1,0 @@
-0 arguments: Collects garbage, then returns the garbage collection total memory.

@@ -247,7 +247,18 @@ namespace OpenGameConsole
 				string commands = "List of commands:\n#\n";
 				foreach (string key in GameConsole.instance.activeConsoleCommands.Keys)
 				{
-					commands += key + "\n";	
+					commands += key;
+					if (GameConsole.instance.activeAliases.ContainsValue(key))
+					{
+						foreach (KeyValuePair<string, string> kvp in GameConsole.instance.activeAliases)
+						{
+							if (kvp.Value == key)
+							{
+								commands += " | " + kvp.Key;
+							}
+						}
+					}	
+					commands += "\n";
 				}
 				commands += "\nType help/man <command name> for more information.\n" +
 					"$this (the currently selected object) can be used in place of 'GameObject Name'\n" +
@@ -259,7 +270,12 @@ namespace OpenGameConsole
 				if (args[0].Replace(" ", "") == "#")
 					return "Help<#>\n\nDoes nothing - used as a comment.";
 				
-				TextAsset helpFile = Resources.Load("man_" + args[0].Replace(" ", "")) as TextAsset;
+				string cmd = args[0].Replace(" ", "");
+				if (GameConsole.instance.activeAliases.ContainsKey(cmd))
+				{
+					cmd = GameConsole.instance.activeAliases[cmd];
+				}
+				TextAsset helpFile = Resources.Load("man_" + cmd) as TextAsset;
 				return "Help<" + args[0].Replace(" ", "") + ">\n\n" + helpFile.text;
 			}
 			catch

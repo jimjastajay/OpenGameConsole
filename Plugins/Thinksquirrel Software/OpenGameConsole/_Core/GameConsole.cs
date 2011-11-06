@@ -23,13 +23,49 @@ namespace OpenGameConsole
 		private int _historySize = 10;
 		private bool _throwErrors = false;
 		
+		// Alias Dictionaries
+		private Dictionary<string, string> _activeAliases = new Dictionary<string, string>();
+		private Dictionary<string, string> _inactiveAliases = new Dictionary<string, string>();
+		
+		public Dictionary<string, string> activeAliases
+		{
+			get
+			{
+				return this._activeAliases;
+			}
+		}
+		
+		public Dictionary<string, string> inactiveAliases
+		{
+			get
+			{
+				return this._inactiveAliases;
+			}
+		}
+		
 		// Dictionaries
 		private Dictionary<string, Func<string[], string>> _activeConsoleCommands = new Dictionary<string, Func<string[], string>>();
 		private Dictionary<string, Func<string[], string>> _inactiveConsoleCommands = new Dictionary<string, Func<string[], string>>();
+		
+		public Dictionary<string, Func<string[], string>> activeConsoleCommands
+		{
+			get
+			{
+				return this._activeConsoleCommands;
+			}
+		}
 
+		public Dictionary<string, Func<string[], string>> inactiveConsoleCommands
+		{
+			get
+			{
+				return this._inactiveConsoleCommands;
+			}
+		}	
+		
 #if UNITY_EDITOR
 		
-		// In string format - for security reasons this should only be visible in the editor.
+		// Dictionaries in string format - for security reasons this should only be visible in the editor.
 		private Dictionary<string, string> _activeConsoleCommandsEDITOR = new Dictionary<string, string>();
 		private Dictionary<string, string> _inactiveConsoleCommandsEDITOR = new Dictionary<string, string>();
 		
@@ -48,22 +84,7 @@ namespace OpenGameConsole
 				return this._inactiveConsoleCommandsEDITOR;
 			}
 		}
-#endif		
-		public Dictionary<string, Func<string[], string>> activeConsoleCommands
-		{
-			get
-			{
-				return this._activeConsoleCommands;
-			}
-		}
-
-		public Dictionary<string, Func<string[], string>> inactiveConsoleCommands
-		{
-			get
-			{
-				return this._inactiveConsoleCommands;
-			}
-		}		
+#endif			
 		
 		// Constructor
 		GameConsole()
@@ -422,6 +443,8 @@ namespace OpenGameConsole
 		{
 			if (_activeConsoleCommands.ContainsKey(commandName) ||
 				_inactiveConsoleCommands.ContainsKey(commandName) ||
+				_activeAliases.ContainsKey(commandName) ||
+				_inactiveAliases.ContainsKey(commandName) ||
 				commandName.Contains("#") ||
 				commandName.Contains("cd") ||
 				commandName.Contains("$this"))
@@ -435,12 +458,63 @@ namespace OpenGameConsole
 		}
 		
 		/// <summary>
+		/// Adds an alias.
+		/// </summary>
+		public void AddAlias(string aliasName, string commandName)
+		{
+			if (_activeAliases.ContainsKey(aliasName) ||
+				_inactiveAliases.ContainsKey(aliasName) ||
+				_activeConsoleCommands.ContainsKey(aliasName) ||
+				_inactiveConsoleCommands.ContainsKey(aliasName) ||
+				aliasName.Contains("#") ||
+				aliasName.Contains("cd") ||
+				aliasName.Contains("$this") ||
+				commandName.Contains("#") ||
+				commandName.Contains("cd") ||
+				commandName.Contains("$this"))
+			{
+				throw new ArgumentException("GameConsole: Alias error/already exists");
+			}
+			
+			// Make sure command exists
+			if (_activeConsoleCommands.ContainsKey(commandName))
+			{
+				_activeAliases.Add(aliasName, commandName);
+			}
+			else if (_inactiveConsoleCommands.ContainsKey(commandName))
+			{
+				_inactiveAliases.Add(aliasName, commandName);
+			}
+			else
+			{
+				throw new ArgumentException("GameConsole: Alias error - command not found");
+			}
+		}
+		
+		/// <summary>
 		/// Activates/Deactivates a console command. Editor only.
 		/// </summary>
 		public void ToggleCommand(string commandName)
 		{
 			if (_activeConsoleCommands.ContainsKey(commandName))
 			{
+				// Check for aliases
+				if (_activeAliases.ContainsValue(commandName))
+				{
+					List<string> aliasesToRemove = new List<string>();
+					foreach (KeyValuePair<string, string> kvp in _activeAliases)
+					{
+						if (kvp.Value == commandName)
+						{
+							aliasesToRemove.Add(kvp.Key);
+						}
+					}
+					foreach (string s in aliasesToRemove)
+					{
+						_inactiveAliases.Add(s, commandName);
+						_activeAliases.Remove(s);
+					}
+				}
 				_inactiveConsoleCommands.Add(commandName, _activeConsoleCommands[commandName]);
 				_activeConsoleCommands.Remove(commandName);
 #if UNITY_EDITOR
@@ -450,6 +524,23 @@ namespace OpenGameConsole
 			}
 			else if (_inactiveConsoleCommands.ContainsKey(commandName))
 			{
+				// Check for aliases
+				if (_inactiveAliases.ContainsValue(commandName))
+				{
+					List<string> aliasesToRemove = new List<string>();
+					foreach (KeyValuePair<string, string> kvp in _inactiveAliases)
+					{
+						if (kvp.Value == commandName)
+						{
+							aliasesToRemove.Add(kvp.Key);
+						}
+					}
+					foreach (string s in aliasesToRemove)
+					{
+						_activeAliases.Add(s, commandName);
+						_inactiveAliases.Remove(s);
+					}
+				}
 				_activeConsoleCommands.Add(commandName, _inactiveConsoleCommands[commandName]);
 				_inactiveConsoleCommands.Remove(commandName);
 #if UNITY_EDITOR
@@ -470,6 +561,22 @@ namespace OpenGameConsole
 		{
 			if (_activeConsoleCommands.ContainsKey(commandName))
 			{
+				// Check for aliases
+				if (_activeAliases.ContainsValue(commandName))
+				{
+					List<string> aliasesToRemove = new List<string>();
+					foreach (KeyValuePair<string, string> kvp in _activeAliases)
+					{
+						if (kvp.Value == commandName)
+						{
+							aliasesToRemove.Add(kvp.Key);
+						}
+					}
+					foreach (string s in aliasesToRemove)
+					{
+						_activeAliases.Remove(s);
+					}
+				}
 				_activeConsoleCommands.Remove(commandName);
 #if UNITY_EDITOR
 				_activeConsoleCommandsEDITOR.Remove(commandName);
@@ -477,6 +584,22 @@ namespace OpenGameConsole
 			}
 			else if (_inactiveConsoleCommands.ContainsKey(commandName))
 			{
+				// Check for aliases
+				if (_inactiveAliases.ContainsValue(commandName))
+				{
+					List<string> aliasesToRemove = new List<string>();
+					foreach (KeyValuePair<string, string> kvp in _inactiveAliases)
+					{
+						if (kvp.Value == commandName)
+						{
+							aliasesToRemove.Add(kvp.Key);
+						}
+					}
+					foreach (string s in aliasesToRemove)
+					{
+						_inactiveAliases.Remove(s);
+					}
+				}
 				_inactiveConsoleCommands.Remove(commandName);
 #if UNITY_EDITOR
 				_inactiveConsoleCommandsEDITOR.Remove(commandName);
@@ -485,6 +608,26 @@ namespace OpenGameConsole
 			else
 			{
 				throw new ArgumentException("GameConsole: Command not found");
+			}
+				
+		}
+		
+		/// <summary>
+		/// Removes an alias.
+		/// </summary>
+		public void RemoveAlias(string aliasName)
+		{
+			if (_activeAliases.ContainsKey(aliasName))
+			{
+				_activeAliases.Remove(aliasName);
+			}
+			else if (_inactiveAliases.ContainsKey(aliasName))
+			{
+				_inactiveAliases.Remove(aliasName);
+			}
+			else
+			{
+				throw new ArgumentException("GameConsole: Alias not found");
 			}
 				
 		}
@@ -518,7 +661,12 @@ namespace OpenGameConsole
 				
 				if (!string.IsNullOrEmpty(s.Replace(" ", "")) && !command.Contains("#") && !command.Contains("cd"))
 				{
-					if (_activeConsoleCommands.ContainsKey(command))
+					if (_activeAliases.ContainsKey(command))
+					{
+						Echo(s, true);
+						Echo(_activeConsoleCommands[_activeAliases[command]](args), false);
+					}
+					else if (_activeConsoleCommands.ContainsKey(command))
 					{
 						Echo(s, true);
 						Echo(_activeConsoleCommands[command](args), false);
@@ -663,9 +811,19 @@ namespace OpenGameConsole
 		// Load default commands. Editor only.
 		public void LoadDefaults()
 		{
+			_activeConsoleCommands = new Dictionary<string, Func<string[], string>>();
+			_inactiveConsoleCommands = new Dictionary<string, Func<string[], string>>();
+			
+#if UNITY_EDITOR
+			_activeConsoleCommandsEDITOR = new Dictionary<string, string>();
+			_inactiveConsoleCommandsEDITOR = new Dictionary<string, string>();
+#endif
+			_activeAliases = new Dictionary<string, string>();
+			_inactiveAliases = new Dictionary<string, string>();
+			
 			// Help
 			AddCommand("help", "OpenGameConsole.CoreCommands.Help");
-			AddCommand("man", "OpenGameConsole.CoreCommands.Help");
+			AddAlias("man", "help");
 			
 			// Console settings
 			AddCommand("c_linespace", "OpenGameConsole.CoreCommands.LineSpace");
@@ -676,76 +834,40 @@ namespace OpenGameConsole
 			
 			// Clearing
 			AddCommand("clear", "OpenGameConsole.CoreCommands.Clear");
-			AddCommand("clr", "OpenGameConsole.CoreCommands.Clear");
-			AddCommand("cls", "OpenGameConsole.CoreCommands.Clear");
+			AddAlias("clr", "clear");
+			AddAlias("cls", "clear");
 			
 			// Debugging
 			AddCommand("log", "OpenGameConsole.CoreCommands.Log");
 			AddCommand("print", "OpenGameConsole.CoreCommands.Print");
 			AddCommand("memusage", "OpenGameConsole.CoreCommands.MemUsage");
-			AddCommand("mem", "OpenGameConsole.CoreCommands.MemUsage");
+			AddAlias("mem", "memusage");
 			AddCommand("garbagecollect", "OpenGameConsole.CoreCommands.GarbageCollect");
-			AddCommand("gc", "OpenGameConsole.CoreCommands.GarbageCollect");
+			AddAlias("gc", "garbagecollect");
 		
 			// GameObject stuff
 			AddCommand("listobjects", "OpenGameConsole.CoreCommands.ListObjects");
-			AddCommand("list", "OpenGameConsole.CoreCommands.ListObjects");
-			AddCommand("ls", "OpenGameConsole.CoreCommands.ListObjects");
-			AddCommand("li", "OpenGameConsole.CoreCommands.ListObjects");
+			AddAlias("list", "listobjects");
+			AddAlias("ls", "listobjects");
+			AddAlias("li", "listobjects");
 			AddCommand("sendmessage", "OpenGameConsole.CoreCommands.SendMessage");
-			AddCommand("send", "OpenGameConsole.CoreCommands.SendMessage");
+			AddAlias("send", "sendmessage");
 			
 			// Physics
 			AddCommand("timescale", "OpenGameConsole.CoreCommands.TimeScale");
-			AddCommand("time", "OpenGameConsole.CoreCommands.TimeScale");
+			AddAlias("time", "timescale");
 			AddCommand("gravity", "OpenGameConsole.CoreCommands.Gravity");
-			AddCommand("grav", "OpenGameConsole.CoreCommands.Gravity");
+			AddAlias("grav", "gravity");
 			AddCommand("loc", "OpenGameConsole.CoreCommands.Loc");
 			AddCommand("move", "OpenGameConsole.CoreCommands.Move");
-			AddCommand("mv", "OpenGameConsole.CoreCommands.Move");
+			AddAlias("mv", "move");
 			AddCommand("move_rb", "OpenGameConsole.CoreCommands.MoveRB");
-			AddCommand("mv_rb", "OpenGameConsole.CoreCommands.MoveRB");
+			AddAlias("mv_rb", "move_rb");
 			
 			// Random
 			AddCommand("nyan", "OpenGameConsole.CoreCommands.NyanCat");
 		}
 //#endif
-
-		/// <summary>
-		/// Enables a console command. Editor only.
-		/// </summary>
-		public void EnableCommand(string commandName)
-		{
-			if (_activeConsoleCommands.ContainsKey(commandName))
-			{
-				return;
-			}
-			if (!_inactiveConsoleCommands.ContainsKey(commandName))
-			{
-				throw new ArgumentException("GameConsole: Command not found");
-			}
-
-			_inactiveConsoleCommands.Remove(commandName);
-			_activeConsoleCommands.Add(commandName, _activeConsoleCommands[commandName]);
-		}
-		
-		/// <summary>
-		/// Disables a console command.
-		/// </summary>
-		public void DisableCommand(string commandName)
-		{
-			if (_inactiveConsoleCommands.ContainsKey(commandName))
-			{
-				return;
-			}
-			if (!_activeConsoleCommands.ContainsKey(commandName))
-			{
-				throw new ArgumentException("GameConsole: Command not found:");
-			}
-			_activeConsoleCommands.Remove(commandName);
-			_inactiveConsoleCommands.Add(commandName, _activeConsoleCommands[commandName]);
-		}
 	
-		
 	}
 }

@@ -1,2 +1,0 @@
-0 arguments: Returns the current physics time scale.
-1 argument (float): Sets the physics time scale.

@@ -2,40 +2,26 @@
 <DictionaryWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Keys>
     <string>help</string>
-    <string>man</string>
     <string>c_linespace</string>
     <string>c_history</string>
     <string>c_verbose</string>
     <string>c_buffer</string>
     <string>c_throwerrors</string>
     <string>clear</string>
-    <string>clr</string>
-    <string>cls</string>
     <string>log</string>
     <string>print</string>
     <string>memusage</string>
-    <string>mem</string>
     <string>garbagecollect</string>
-    <string>gc</string>
     <string>listobjects</string>
-    <string>list</string>
-    <string>ls</string>
-    <string>li</string>
     <string>sendmessage</string>
-    <string>send</string>
     <string>timescale</string>
-    <string>time</string>
     <string>gravity</string>
-    <string>grav</string>
     <string>loc</string>
     <string>move</string>
-    <string>mv</string>
     <string>move_rb</string>
-    <string>mv_rb</string>
     <string>nyan</string>
   </Keys>
   <Values>
-    <string>OpenGameConsole.CoreCommands.Help</string>
     <string>OpenGameConsole.CoreCommands.Help</string>
     <string>OpenGameConsole.CoreCommands.LineSpace</string>
     <string>OpenGameConsole.CoreCommands.History</string>
@@ -43,28 +29,16 @@
     <string>OpenGameConsole.CoreCommands.Buffer</string>
     <string>OpenGameConsole.CoreCommands.ThrowErrors</string>
     <string>OpenGameConsole.CoreCommands.Clear</string>
-    <string>OpenGameConsole.CoreCommands.Clear</string>
-    <string>OpenGameConsole.CoreCommands.Clear</string>
     <string>OpenGameConsole.CoreCommands.Log</string>
     <string>OpenGameConsole.CoreCommands.Print</string>
     <string>OpenGameConsole.CoreCommands.MemUsage</string>
-    <string>OpenGameConsole.CoreCommands.MemUsage</string>
-    <string>OpenGameConsole.CoreCommands.GarbageCollect</string>
     <string>OpenGameConsole.CoreCommands.GarbageCollect</string>
     <string>OpenGameConsole.CoreCommands.ListObjects</string>
-    <string>OpenGameConsole.CoreCommands.ListObjects</string>
-    <string>OpenGameConsole.CoreCommands.ListObjects</string>
-    <string>OpenGameConsole.CoreCommands.ListObjects</string>
-    <string>OpenGameConsole.CoreCommands.SendMessage</string>
     <string>OpenGameConsole.CoreCommands.SendMessage</string>
     <string>OpenGameConsole.CoreCommands.TimeScale</string>
-    <string>OpenGameConsole.CoreCommands.TimeScale</string>
-    <string>OpenGameConsole.CoreCommands.Gravity</string>
     <string>OpenGameConsole.CoreCommands.Gravity</string>
     <string>OpenGameConsole.CoreCommands.Loc</string>
     <string>OpenGameConsole.CoreCommands.Move</string>
-    <string>OpenGameConsole.CoreCommands.Move</string>
-    <string>OpenGameConsole.CoreCommands.MoveRB</string>
     <string>OpenGameConsole.CoreCommands.MoveRB</string>
     <string>OpenGameConsole.CoreCommands.NyanCat</string>
   </Values>

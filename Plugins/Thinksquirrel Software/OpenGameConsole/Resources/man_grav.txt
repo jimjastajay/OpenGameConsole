@@ -1,2 +1,0 @@
-0 arguments: Returns the current physics gravity vector.
-3 arguments (float,float,float): Sets the physics gravity vector.
