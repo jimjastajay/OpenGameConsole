@@ -9,6 +9,8 @@ public class EditorConsoleDisplay : EditorWindow
 	private Vector2 scrollPosition;
 	private string currentText = "";
 	private int commandPointer = - 1;
+	private Color bgColor = Color.black;
+	private Color fgColor = Color.white;
 	
 	[MenuItem ("Window/OpenGameConsole")]
     static void Init()
@@ -18,12 +20,42 @@ public class EditorConsoleDisplay : EditorWindow
 	
 	void OnGUI()
 	{
+		GUI.backgroundColor = bgColor;
+		GUI.contentColor = fgColor;
+		GUI.SetNextControlName("Dummy Button");
+		GUI.depth = 100;
+		if (GUI.Button(new Rect(0, 14, position.width, position.height - 14), ""))
+		{
+			GUI.FocusControl("Current Text");
+		}
+		GUI.depth = 0;
+		if (GUI.GetNameOfFocusedControl() == "Dummy Button")
+		{
+			GUI.FocusControl("Current Text");
+		}
+		GUI.backgroundColor = Color.white;
+
+		GUILayout.BeginVertical("Toolbar");
+		GUI.backgroundColor = bgColor;
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Space(4);
+
+		GUI.backgroundColor = Color.white;
+		GUILayout.Label("Background ", EditorStyles.toolbarButton);
+		bgColor = EditorGUILayout.ColorField(bgColor, GUILayout.Width(40));
+		GUILayout.Label("Foreground ", EditorStyles.toolbarButton);
+		fgColor = EditorGUILayout.ColorField(fgColor, GUILayout.Width(40));
+		GUILayout.FlexibleSpace();
+		GUILayout.EndHorizontal();
+		GUILayout.EndVertical();
+		
+		GUI.backgroundColor = bgColor;
+		
 		scrollPosition = GUILayout.BeginScrollView(
-        scrollPosition, GUILayout.Width(position.width), GUILayout.Height(position.height - 25));
+        scrollPosition, GUILayout.Width(position.width), GUILayout.Height(position.height - 20));
 		
 		GUILayout.Label(GameConsole.instance.stream);
-		
-		GUILayout.EndScrollView();
 		
 		GUI.SetNextControlName("Current Text");
 		
@@ -38,8 +70,13 @@ public class EditorConsoleDisplay : EditorWindow
 			"@" + Application.platform.ToString() +
 			":" + GameConsole.instance.contextString +
 			"# >", GUILayout.ExpandWidth(false));
+		GUI.backgroundColor = Color.clear;
 		currentText = GUILayout.TextField(currentText);
+		GUI.backgroundColor = bgColor;
 		GUILayout.EndHorizontal();
+		
+		GUILayout.EndScrollView();
+		
 		if (Event.current != null)
 		{	
 			Repaint();

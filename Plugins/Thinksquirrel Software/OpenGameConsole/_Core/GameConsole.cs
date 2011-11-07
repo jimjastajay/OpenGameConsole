@@ -809,6 +809,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return;
 			}
 		}
+		
 		// Load default commands. Editor only.
 		public void LoadDefaults()
 		{
