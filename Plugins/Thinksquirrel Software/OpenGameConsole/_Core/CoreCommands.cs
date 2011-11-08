@@ -1,3 +1,23 @@
+/// These defines control compilation of each command - it is recommended to undefine any commands that are not enabled.
+#define NYAN_CAT
+#define CLEAR
+#define THROW_ERRORS
+#define BUFFER
+#define VERBOSE
+#define HISTORY
+#define LINE_SPACE
+#define HELP
+#define LIST_OBJECTS
+#define MEM_USAGE
+#define GARBAGE_COLLECT
+#define GRAVITY
+#define TIME_SCALE
+#define MOVE
+#define MOVE_RB
+#define SEND_MESSAGE
+#define LOC
+#define PRINT
+#define LOG
 using UnityEngine;
 using ThinksquirrelSoftware.OpenGameConsole;
 using ThinksquirrelSoftware.OpenGameConsole.Utility;
@@ -10,7 +30,8 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 {
 	public static class CoreCommands
 	{
-		static AudioSource PlayNyan(AudioClip clip, Vector3 position)
+#if NYAN_CAT
+		private static AudioSource PlayNyan(AudioClip clip, Vector3 position)
 		{
 			GameObject go = new GameObject("nyan");
 			go.transform.position = position;
@@ -22,6 +43,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		}
 		
 		private static AudioSource nyan;
+#endif
 		
 		/// <summary>
 		/// Nyans the cat.
@@ -34,6 +56,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </param>
 		public static string NyanCat(params string[] args)
 		{
+#if NYAN_CAT
 			if (nyan)
 			{
 				if (nyan.isPlaying)
@@ -83,16 +106,22 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				"      o       +          +           +\n" +
 				"+        o        o          +      o\n";
 			}
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string Clear(string[] args)
 		{
+#if CLEAR
 			GameConsole.instance.ClearStream();
-			return null;
+#endif
+			return string.Empty;
 		}
 		
 		public static string ThrowErrors(string[] args)
 		{	
+#if THROW_ERRORS			
 			if (args.Length == 0)
 			{
 				return "Throw errors currently set to: " + GameConsole.instance.throwErrors;
@@ -111,11 +140,15 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			catch
 			{
 				return ConsoleErrors.InvalidArgumentError;
-			}	
+			}
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string Buffer(string[] args)
 		{
+#if BUFFER			
 			if (args.Length == 0)
 			{
 				return "Line buffer size currently set to: " + GameConsole.instance.bufferSize;
@@ -135,10 +168,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			{
 				return ConsoleErrors.InvalidArgumentError;
 			}
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string Verbose(string[] args)
 		{
+#if VERBOSE
 			if (args.Length == 0)
 			{
 				return "Verbose mode currently set to: " + GameConsole.instance.verbose;
@@ -157,11 +194,15 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			catch
 			{
 				return ConsoleErrors.InvalidArgumentError;
-			}	
+			}
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string History(string[] args)
-		{		
+		{
+#if HISTORY			
 			if (args.Length == 0)
 			{
 				return "Line history size currently set to: " + GameConsole.instance.historySize;
@@ -181,11 +222,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			{
 				return ConsoleErrors.InvalidArgumentError;
 			}
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string LineSpace(string[] args)
 		{
-			
+#if LINE_SPACE			
 			if (args.Length == 0)
 			{
 				return "Line spacing currently set to: " + GameConsole.instance.streamSpacing;
@@ -205,10 +249,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			{
 				return ConsoleErrors.InvalidArgumentError;
 			}
+#else
+			return string.Empty;
+#endif			
 		}
 		
 		public static string Help(string[] args)
 		{
+#if HELP
 			if (args.Length > 1)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -255,11 +303,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			{
 				return ConsoleErrors.ResourceNotFoundError(args[0]);
 			}
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string ListObjects(string[] args)
 		{
-			
+#if LIST_OBJECTS	
 			if (args.Length > 0)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -301,10 +352,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			
 			return ConsoleErrors.InvalidArgumentError;
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string MemUsage(string[] args)
 		{
+#if MEM_USAGE
 			if (args.Length > 0)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -316,10 +371,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			
 			return ConsoleErrors.InvalidArgumentError;
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string GarbageCollect(string[] args)
 		{
+#if GARBAGE_COLLECT
 			if (args.Length > 0)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -331,6 +390,9 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			
 			return ConsoleErrors.InvalidArgumentError;
+#else
+			return string.Empty;
+#endif
 		}
 		
 		/// <summary>
@@ -338,6 +400,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string Gravity(string[] args)
 		{
+#if GRAVITY
 			if (args.Length > 3)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -364,6 +427,9 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			{
 				return ConsoleErrors.InvalidArgumentError;
 			}
+#else
+			return string.Empty;
+#endif
 		}
 		
 		
@@ -372,6 +438,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string TimeScale(string[] args)
 		{
+#if TIME_SCALE
 			if (args.Length > 1)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -396,10 +463,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			{
 				return ConsoleErrors.InvalidArgumentError;
 			}
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string Move(string[] args)
-		{	
+		{
+#if MOVE
 			if (args.Length != 4)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -428,10 +499,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					"X: " + a.x +
 					" | Y: " + a.y +
 					" | Z: " + a.z;
+#else
+			return string.Empty;
+#endif
 		}
 		
 		public static string MoveRB(string[] args)
 		{	
+#if MOVE_RB
 			if (args.Length != 4)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -460,6 +535,9 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					"X: " + a.x +
 					" | Y: " + a.y +
 					" | Z: " + a.z;
+#else
+			return string.Empty;
+#endif
 		}
 		
 		
@@ -468,6 +546,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string SendMessage(string[] args)
 		{	
+#if SEND_MESSAGE
 			if (args.Length != 2)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -483,6 +562,9 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 				
 			return "Sent message: " + args[1] + " to " + args[0];
+#else
+			return string.Empty;
+#endif
 		}
 		
 		/// <summary>
@@ -490,6 +572,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string Loc(string[] args)
 		{	
+#if LOC
 			if (args.Length != 2)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -510,19 +593,26 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					"X: " + position.x +
 					" | Y: " + position.y +
 					" | Z: " + position.z;
+#else
+			return string.Empty;
+#endif
 		}
 		
 		/// <summary>
 		/// Print a message to the console.
 		/// </summary>
 		public static string Print(string[] args)
-		{	
+		{
+#if PRINT
 			if (args.Length != 1)
 			{
 				return ConsoleErrors.InvalidArgumentError;
 			}
 				
 			return args[0];
+#else
+			return string.Empty;
+#endif
 		}
 		
 		/// <summary>
@@ -530,6 +620,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string Log(string[] args)
 		{	
+#if LOG
 			if (args.Length != 1)
 			{
 				return ConsoleErrors.InvalidArgumentError;
@@ -537,6 +628,9 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			
 			Debug.Log(args[0]);
 			return args[0];
+#else
+			return string.Empty;
+#endif
 		}
 	}
 }

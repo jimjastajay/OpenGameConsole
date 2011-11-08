@@ -55,7 +55,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 				DictionaryWrapper activeWrapper = (DictionaryWrapper)deserializer.Deserialize(textReaderActive);
 				textReaderActive.Close();
 #if UNITY_EDITOR
-				TextReader textReaderInactive = new StringReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/inactive-commands.xml");
+				TextReader textReaderInactive = new StreamReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/inactive-commands.xml");
 				DictionaryWrapper inactiveWrapper = (DictionaryWrapper)deserializer.Deserialize(textReaderInactive);
 				textReaderInactive.Close();
 #endif			
