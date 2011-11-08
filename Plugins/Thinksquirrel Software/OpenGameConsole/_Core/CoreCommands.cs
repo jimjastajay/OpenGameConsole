@@ -1,5 +1,6 @@
 using UnityEngine;
 using ThinksquirrelSoftware.OpenGameConsole;
+using ThinksquirrelSoftware.OpenGameConsole.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -91,20 +92,15 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		}
 		
 		public static string ThrowErrors(string[] args)
-		{
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+		{	
+			if (args.Length == 0)
 			{
 				return "Throw errors currently set to: " + GameConsole.instance.throwErrors;
 			}
 			
 			if (args.Length != 1)
 			{
-				return "$!errorThrowErrors: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
 			try
@@ -114,25 +110,20 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			catch
 			{
-				return "$!errorThrowErrors: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}	
 		}
 		
 		public static string Buffer(string[] args)
 		{
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				return "Line buffer size currently set to: " + GameConsole.instance.bufferSize;
 			}
 			
 			if (args.Length != 1)
 			{
-				return "$!errorBuffer: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
 			try
@@ -142,25 +133,20 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			catch
 			{
-				return "$!errorBuffer: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 		}
 		
 		public static string Verbose(string[] args)
 		{
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				return "Verbose mode currently set to: " + GameConsole.instance.verbose;
 			}
 			
 			if (args.Length != 1)
 			{
-				return "$!errorVerbose: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
 			try
@@ -170,25 +156,20 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			catch
 			{
-				return "$!errorVerbose: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}	
 		}
 		
 		public static string History(string[] args)
-		{
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+		{		
+			if (args.Length == 0)
 			{
 				return "Line history size currently set to: " + GameConsole.instance.historySize;
 			}
 			
 			if (args.Length != 1)
 			{
-				return "$!errorHistory: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
 			try
@@ -198,25 +179,21 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			catch
 			{
-				return "$!errorHistory: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 		}
 		
 		public static string LineSpace(string[] args)
 		{
-			string arg = String.Join(",", args);
 			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				return "Line spacing currently set to: " + GameConsole.instance.streamSpacing;
 			}
 			
 			if (args.Length != 1)
 			{
-				return "$!errorLineSpace: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
 			try
@@ -226,23 +203,18 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			catch
 			{
-				return "$!errorLineSpace: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 		}
 		
 		public static string Help(string[] args)
 		{
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-
 			if (args.Length > 1)
 			{
-				return "$!errorHelp: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				string commands = "List of commands:\n#\n";
 				foreach (string key in GameConsole.instance.activeConsoleCommands.Keys)
@@ -261,10 +233,11 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					commands += "\n";
 				}
 				commands += "\nType help/man <command name> for more information.\n" +
-					"$this (the currently selected object) can be used in place of 'GameObject Name'\n" +
+					"$this (the currently selected object) can be used in place of \"GameObject Name\"\n" +
 					"Semicolons (;) denote a new line.";
 				return commands;
 			}
+			
 			try
 			{
 				if (args[0].Replace(" ", "") == "#")
@@ -280,18 +253,19 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			catch
 			{
-				return "$!errorHelp: Command or manual entry not found " + "<" + arg + ">";
+				return ConsoleErrors.ResourceNotFoundError(args[0]);
 			}
 		}
 		
 		public static string ListObjects(string[] args)
 		{
-			string arg = String.Join(",", args);
 			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
+			if (args.Length > 0)
+			{
+				return ConsoleErrors.InvalidArgumentError;
+			}
 			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				try
 				{
@@ -322,41 +296,41 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				}
 				catch
 				{
-					return "$!errorListObjects: Command or manual entry not found " + "<" + arg + ">";
+					return ConsoleErrors.GameObjectNotFoundError(args[0]);
 				}
 			}
 			
-			return "$!errorListObjects: Invalid argument " + "<" + arg + ">";
+			return ConsoleErrors.InvalidArgumentError;
 		}
 		
 		public static string MemUsage(string[] args)
 		{
-			string arg = String.Join(",", args);
+			if (args.Length > 0)
+			{
+				return ConsoleErrors.InvalidArgumentError;
+			}
 			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				return "Current GC total memory:\n" + System.GC.GetTotalMemory(false).ToString() + " bytes";				
 			}
 			
-			return "$!errorMemUsage: Invalid argument " + "<" + arg + ">";
+			return ConsoleErrors.InvalidArgumentError;
 		}
 		
 		public static string GarbageCollect(string[] args)
 		{
-			string arg = String.Join(",", args);
+			if (args.Length > 0)
+			{
+				return ConsoleErrors.InvalidArgumentError;
+			}
 			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				return "Garbage Collected - Current GC total memory:\n" + System.GC.GetTotalMemory(true).ToString() + " bytes";				
 			}
 			
-			return "$!errorMemUsage: Invalid argument " + "<" + arg + ">";
+			return ConsoleErrors.InvalidArgumentError;
 		}
 		
 		/// <summary>
@@ -364,12 +338,12 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string Gravity(string[] args)
 		{
-			string arg = String.Join(",", args);
+			if (args.Length > 3)
+			{
+				return ConsoleErrors.InvalidArgumentError;
+			}
 			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				return "Gravity currently set to: " +
 					"X: " + Physics.gravity.x +
@@ -377,30 +351,18 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					" | Z: " + Physics.gravity.z;
 			}
 			
-			if (args.Length != 3)
-			{
-				return "$!errorGravity: Invalid argument " + "<" + arg + ">";
-			}
-			
-			float x = 0;
-			float y = 0;
-			float z = 0;
-			
 			try
 			{
-				x = System.Convert.ToSingle(args[0]);
-				y = System.Convert.ToSingle(args[1]);
-				z = System.Convert.ToSingle(args[2]);
+				Physics.gravity = OGCParse.ParseVector3(args[0], args[1], args[2], Physics.gravity);
 				
-				Physics.gravity = new Vector3(x, y, z);
 				return "Gravity set to: " +
-					"X: " + x +
-					" | Y: " + y +
-					" | Z: " + z;
+					"X: " + Physics.gravity.x +
+					" | Y: " + Physics.gravity.y +
+					" | Z: " + Physics.gravity.z;
 			}
 			catch
 			{
-				return "$!errorGravity: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 		}
 		
@@ -410,19 +372,19 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string TimeScale(string[] args)
 		{
-			string arg = String.Join(",", args);
+			if (args.Length > 1)
+			{
+				return ConsoleErrors.InvalidArgumentError;
+			}
 			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (string.IsNullOrEmpty(arg))
+			if (args.Length == 0)
 			{
 				return "Time scale currently set to: " + Time.timeScale;
 			}
 			
 			if (args.Length != 1)
 			{
-				return "$!errorTimeScale: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
 			try
@@ -432,124 +394,72 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 			catch
 			{
-				return "$!errorTimeScale: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 		}
 		
 		public static string Move(string[] args)
 		{	
-			// Parse the string and test for malformed strings
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
 			if (args.Length != 4)
 			{
-				return "$!errorMove: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
+			Vector3 a = Vector3.zero;
 			
-			if (arg.IndexOf("'") == -1)
+			try
 			{
-				return "$!errorMove: Invalid argument " + "<" + arg + ">";
+				a = OGCParse.ParseVector3(args[1], args[2], args[3], GameObject.Find(args[0]).transform.position);
 			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(0, arg.IndexOf("'")).Replace(" ", "")))
+			catch
 			{
-				return "$!errorMove: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.VectorParsingError;
 			}
-			
-			Regex regName = new Regex("'(.*)'");
-			Match match = regName.Match(arg);
-			string result = "";
-			float x = 0;
-			float y = 0;
-			float z = 0;
-			
-			if (match.Success)
+			try
 			{
-				
-				result = match.Groups[1].Value;
-				try
-				{
-					x = System.Convert.ToSingle(args[1]);
-					y = System.Convert.ToSingle(args[2]);
-					z = System.Convert.ToSingle(args[3]);
-					GameObject.Find(result).transform.position = new Vector3(x, y, z);
-				}
-				catch
-				{
-					return "$!errorMove: Unable to move GameObject " + "<" + arg + ">";
-				}
+				GameObject.Find(args[0]).transform.position = a;
 			}
-			else
+			catch
 			{
-				return "$!errorMove: Invalid argument " + "<" + arg + ">";
-				
+				return ConsoleErrors.GameObjectNotFoundError(args[0]);
 			}
 				
-			return "Moved GameObject: " + result + " to " + 
-					"X: " + x +
-					" | Y: " + y +
-					" | Z: " + z;
+			return "Moved GameObject: " + args[0] + " to " + 
+					"X: " + a.x +
+					" | Y: " + a.y +
+					" | Z: " + a.z;
 		}
 		
 		public static string MoveRB(string[] args)
 		{	
-			// Parse the string and test for malformed strings
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
 			if (args.Length != 4)
 			{
-				return "$!errorMoveRB: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
+			Vector3 a = Vector3.zero;
 			
-			if (arg.IndexOf("'") == -1)
+			try
 			{
-				return "$!errorMoveRB: Invalid argument " + "<" + arg + ">";
+				a = OGCParse.ParseVector3(args[1], args[2], args[3], GameObject.Find(args[0]).rigidbody.position);
 			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(0, arg.IndexOf("'")).Replace(" ", "")))
+			catch
 			{
-				return "$!errorMove: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.VectorParsingError;
 			}
-			
-			Regex regName = new Regex("'(.*)'");
-			Match match = regName.Match(arg);
-			string result = "";
-			float x = 0;
-			float y = 0;
-			float z = 0;
-			if (match.Success)
+			try
 			{
-				result = match.Groups[1].Value;
-				try
-				{
-					x = System.Convert.ToSingle(args[1]);
-					y = System.Convert.ToSingle(args[2]);
-					z = System.Convert.ToSingle(args[3]);
-					GameObject.Find(result).rigidbody.position = new Vector3(x, y, z);
-				}
-				catch
-				{
-					return "$!errorMoveRB: Unable to move Rigidbody " + "<" + arg + ">";
-				}
+				GameObject.Find(args[0]).rigidbody.position = a;
 			}
-			else
+			catch
 			{
-				return "$!errorMoveRB: Invalid argument " + "<" + arg + ">";
-				
+				return ConsoleErrors.GameObjectNotFoundError(args[0]);
 			}
 				
-			return "Moved Rigidbody: " + result + " to " + 
-					"X: " + x +
-					" | Y: " + y +
-					" | Z: " + z;
+			return "Moved Rigidbody: " + args[0] + " to " + 
+					"X: " + a.x +
+					" | Y: " + a.y +
+					" | Z: " + a.z;
 		}
 		
 		
@@ -558,51 +468,21 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string SendMessage(string[] args)
 		{	
-			// Parse the string and test for malformed strings
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
 			if (args.Length != 2)
 			{
-				return "$!errorSendMessage: Invalid argument " + "<" + arg + ">";
-			}
-			
-			
-			if (arg.IndexOf("'") == -1)
-			{
-				return "$!errorSendMessage: Invalid argument " + "<" + arg + ">";
-			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(0, arg.IndexOf("'")).Replace(" ", "")))
-			{
-				return "$!errorSendMessage: Invalid argument " + "<" + arg + ">";
-			}
-			
-			Regex regName = new Regex("'(.*)'");
-			Match match = regName.Match(arg);
-			string result = "";
-			
-			if (match.Success)
-			{
-				result = match.Groups[1].Value;
-				try
-				{
-					GameObject.Find(result).SendMessage(args[1], SendMessageOptions.RequireReceiver);
-				}
-				catch
-				{
-					return "$!errorSendMessage: Unable to send message " + "<" + arg + ">";
-				}
-			}
-			else
-			{
-				return "$!errorSendMessage: Invalid argument " + "<" + arg + ">";
-				
+				return ConsoleErrors.InvalidArgumentError;
 			}
 				
-			return "Sent message: " + args[1] + " to " + result;
+			try
+			{
+				GameObject.Find(args[0]).SendMessage(args[1], SendMessageOptions.RequireReceiver);
+			}
+			catch
+			{
+				return ConsoleErrors.SendMessageError(args[1], args[0]);
+			}
+				
+			return "Sent message: " + args[1] + " to " + args[0];
 		}
 		
 		/// <summary>
@@ -610,50 +490,23 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string Loc(string[] args)
 		{	
-			// Parse the string and test for malformed strings
-			string arg = String.Join(",", args);
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (arg.IndexOf("'") == -1)
+			if (args.Length != 2)
 			{
-				return "$!errorLoc: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
-			if (!string.IsNullOrEmpty(arg.Substring(0, arg.IndexOf("'")).Replace(" ", "")))
-			{
-				return "$!errorLoc: Invalid argument " + "<" + arg + ">";
-			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(arg.LastIndexOf("'") + 1, arg.Length - 1 - arg.LastIndexOf("'")).Replace(" ", "")))
-			{
-				return "$!errorLoc: Invalid argument " + "<" + arg + ">";
-			}
-			
-			Regex regName = new Regex("'(.*)'");
-			Match match = regName.Match(arg);
-			string result = "";
 			Vector3 position = Vector3.zero;
 			
-			if (match.Success)
+			try
 			{
-				result = match.Groups[1].Value;
-				try
-				{
-					position = GameObject.Find(result).transform.position;
-				}
-				catch
-				{
-					return "$!errorLoc: Unable to find GameObject " + "<" + arg + ">";
-				}
+				position = GameObject.Find(args[0]).transform.position;
 			}
-			else
+			catch
 			{
-				return "$!errorLoc: Invalid argument " + "<" + arg + ">";
-				
+				return ConsoleErrors.GameObjectNotFoundError(args[0]);
 			}
-				
-			return result + " is located at " + 
+			
+			return args[0] + " is located at " + 
 					"X: " + position.x +
 					" | Y: " + position.y +
 					" | Z: " + position.z;
@@ -664,41 +517,12 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string Print(string[] args)
 		{	
-			// Parse the string and test for malformed strings
-			string arg = String.Join(",", args);
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (arg.IndexOf("'") == -1)
+			if (args.Length != 1)
 			{
-				return "$!errorPrint: Invalid argument " + "<" + arg + ">";
-			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(0, arg.IndexOf("'")).Replace(" ", "")))
-			{
-				return "$!errorPrint: Invalid argument " + "<" + arg + ">";
-			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(arg.LastIndexOf("'") + 1, arg.Length - 1 - arg.LastIndexOf("'")).Replace(" ", "")))
-			{
-				return "$!errorPrint: Invalid argument " + "<" + arg + ">";
-			}
-			
-			Regex regName = new Regex("'(.*)'");
-			Match match = regName.Match(arg);
-			string result = "";
-			
-			if (match.Success)
-			{
-				result = match.Groups[1].Value;
-			}
-			else
-			{
-				return "$!errorPrint: Invalid argument " + "<" + arg + ">";
-				
+				return ConsoleErrors.InvalidArgumentError;
 			}
 				
-			return result;
+			return args[0];
 		}
 		
 		/// <summary>
@@ -706,42 +530,13 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public static string Log(string[] args)
 		{	
-			// Parse the string and test for malformed strings
-			string arg = String.Join(",", args);
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (arg.IndexOf("'") == -1)
+			if (args.Length != 1)
 			{
-				return "$!errorLog: Invalid argument " + "<" + arg + ">";
+				return ConsoleErrors.InvalidArgumentError;
 			}
 			
-			if (!string.IsNullOrEmpty(arg.Substring(0, arg.IndexOf("'")).Replace(" ", "")))
-			{
-				return "$!errorLog: Invalid argument " + "<" + arg + ">";
-			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(arg.LastIndexOf("'") + 1, arg.Length - 1 - arg.LastIndexOf("'")).Replace(" ", "")))
-			{
-				return "$!errorLog: Invalid argument " + "<" + arg + ">";
-			}
-			
-			Regex regName = new Regex("'(.*)'");
-			Match match = regName.Match(arg);
-			string result = "";
-			
-			if (match.Success)
-			{
-				result = match.Groups[1].Value;
-				Debug.Log(result);
-			}
-			else
-			{
-				return "$!errorLog: Invalid argument " + "<" + arg + ">";
-				
-			}
-				
-			return result;
+			Debug.Log(args[0]);
+			return args[0];
 		}
 	}
 }

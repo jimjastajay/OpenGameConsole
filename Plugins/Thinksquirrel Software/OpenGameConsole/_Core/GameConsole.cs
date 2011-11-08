@@ -1,4 +1,3 @@
-//UnityEngine only for Debug.Log and GameObject
 using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
@@ -23,11 +22,12 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		private int _bufferSize = 200;
 		private int _historySize = 10;
 		private bool _throwErrors = false;
-		
 		// Alias Dictionaries
 		private Dictionary<string, string> _activeAliases = new Dictionary<string, string>();
+
+#if UNITY_EDITOR
 		private Dictionary<string, string> _inactiveAliases = new Dictionary<string, string>();
-		
+#endif		
 		public Dictionary<string, string> activeAliases
 		{
 			get
@@ -36,18 +36,12 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 		}
 		
-		public Dictionary<string, string> inactiveAliases
-		{
-			get
-			{
-				return this._inactiveAliases;
-			}
-		}
-		
 		// Dictionaries
 		private Dictionary<string, Func<string[], string>> _activeConsoleCommands = new Dictionary<string, Func<string[], string>>();
+
+#if UNITY_EDITOR
 		private Dictionary<string, Func<string[], string>> _inactiveConsoleCommands = new Dictionary<string, Func<string[], string>>();
-		
+#endif		
 		public Dictionary<string, Func<string[], string>> activeConsoleCommands
 		{
 			get
@@ -60,21 +54,29 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		{
 			get
 			{
+#if UNITY_EDITOR				
 				return this._inactiveConsoleCommands;
+#else
+				return null;
+#endif
 			}
-		}	
+		}
 		
 #if UNITY_EDITOR
 		
 		// Dictionaries in string format - for security reasons this should only be visible in the editor.
 		private Dictionary<string, string> _activeConsoleCommandsEDITOR = new Dictionary<string, string>();
 		private Dictionary<string, string> _inactiveConsoleCommandsEDITOR = new Dictionary<string, string>();
-		
+#endif			
 		public Dictionary<string, string> activeConsoleCommandsEDITOR
 		{
 			get
 			{
+#if UNITY_EDITOR				
 				return this._activeConsoleCommandsEDITOR;
+#else
+				return null;
+#endif	
 			}
 		}
 		
@@ -82,10 +84,25 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		{
 			get
 			{
+#if UNITY_EDITOR				
 				return this._inactiveConsoleCommandsEDITOR;
+#else
+				return null;
+#endif	
 			}
 		}
-#endif			
+
+		public Dictionary<string, string> inactiveAliases
+		{
+			get
+			{
+#if UNITY_EDITOR				
+				return this._inactiveAliases;
+#else
+				return null;
+#endif	
+			}
+		}
 		
 		// Constructor
 		GameConsole()
@@ -253,7 +270,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// </summary>
 		public void Throw(string message)
 		{
-			Echo("$!error" + message, false);
+			Echo("$!error$" + message, false);
 		}
 			
 		// Echo (also records to stream)
@@ -262,10 +279,10 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			if (!string.IsNullOrEmpty(message))
 			{
 				bool error = false;
-				if (message.Contains("$!error"))
+				if (message.StartsWith("$!error$"))
 				{
 					error = true;
-					message = message.Remove(0, 7);
+					message = message.Remove(0, 8);
 				}
 				string seperator = "--> ";
 				string date = "";
@@ -317,50 +334,6 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			}
 		}
 		
-		/// <summary>
-		/// Get the first word of a string.
-		/// </summary>
-		public string FirstWord(string input)
-		{
-			if (input.Length < 3)
-			{
-				return input;
-			}
-			
-			try
-			{
-				// Number of words we still want to display.
-				int words = 1;
-				// Loop through entire summary.
-				for (int i = 0; i < input.Length; i++)
-				{
-					// Increment words on a space.
-					if (input[i] == ' ')
-					{
-						words--;
-					}
-					
-					// If we have no more words to display, return the substring.
-					if (words == 0)
-					{
-						return input.Substring(0, i);
-					}
-					
-					// At the end!
-					if (i == input.Length - 1)
-					{
-						return input;
-					}
-				}
-			}
-			catch (Exception)
-			{
-				Throw("Command parsing error");
-			}
-			return string.Empty;
-		}
-		
-//#if UNITY_EDITOR
 		/// <summary>
 		///  Convert string to a command (Func<object, string>). Calls both static and instance methods.
 		/// </summary>
@@ -432,7 +405,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		}
 		
 		/// <summary>
-		/// Adds a console command. Editor only.
+		/// Adds a console command.
 		/// </summary>
 		/// <remarks>
 		/// Console commands can call either static or instance methods.
@@ -443,9 +416,13 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		public void AddCommand(string commandName, string command)
 		{
 			if (_activeConsoleCommands.ContainsKey(commandName) ||
+#if UNITY_EDITOR				
 				_inactiveConsoleCommands.ContainsKey(commandName) ||
+#endif
 				_activeAliases.ContainsKey(commandName) ||
+#if UNITY_EDITOR
 				_inactiveAliases.ContainsKey(commandName) ||
+#endif
 				commandName.Contains("#") ||
 				commandName.Contains("cd") ||
 				commandName.Contains("$this"))
@@ -458,40 +435,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 		}
 		
-		/// <summary>
-		/// Adds an alias.
-		/// </summary>
-		public void AddAlias(string aliasName, string commandName)
-		{
-			if (_activeAliases.ContainsKey(aliasName) ||
-				_inactiveAliases.ContainsKey(aliasName) ||
-				_activeConsoleCommands.ContainsKey(aliasName) ||
-				_inactiveConsoleCommands.ContainsKey(aliasName) ||
-				aliasName.Contains("#") ||
-				aliasName.Contains("cd") ||
-				aliasName.Contains("$this") ||
-				commandName.Contains("#") ||
-				commandName.Contains("cd") ||
-				commandName.Contains("$this"))
-			{
-				throw new ArgumentException("GameConsole: Alias error/already exists");
-			}
-			
-			// Make sure command exists
-			if (_activeConsoleCommands.ContainsKey(commandName))
-			{
-				_activeAliases.Add(aliasName, commandName);
-			}
-			else if (_inactiveConsoleCommands.ContainsKey(commandName))
-			{
-				_inactiveAliases.Add(aliasName, commandName);
-			}
-			else
-			{
-				throw new ArgumentException("GameConsole: Alias error - command not found");
-			}
-		}
-		
+#if UNITY_EDITOR		
 		/// <summary>
 		/// Activates/Deactivates a console command. Editor only.
 		/// </summary>
@@ -518,10 +462,8 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				}
 				_inactiveConsoleCommands.Add(commandName, _activeConsoleCommands[commandName]);
 				_activeConsoleCommands.Remove(commandName);
-#if UNITY_EDITOR
 				_inactiveConsoleCommandsEDITOR.Add(commandName, _activeConsoleCommandsEDITOR[commandName]);
-				_activeConsoleCommandsEDITOR.Remove(commandName);
-#endif	
+				_activeConsoleCommandsEDITOR.Remove(commandName);	
 			}
 			else if (_inactiveConsoleCommands.ContainsKey(commandName))
 			{
@@ -544,10 +486,8 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				}
 				_activeConsoleCommands.Add(commandName, _inactiveConsoleCommands[commandName]);
 				_inactiveConsoleCommands.Remove(commandName);
-#if UNITY_EDITOR
 				_activeConsoleCommandsEDITOR.Add(commandName, _inactiveConsoleCommandsEDITOR[commandName]);
 				_inactiveConsoleCommandsEDITOR.Remove(commandName);
-#endif
 			}
 			else
 			{
@@ -579,9 +519,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					}
 				}
 				_activeConsoleCommands.Remove(commandName);
-#if UNITY_EDITOR
 				_activeConsoleCommandsEDITOR.Remove(commandName);
-#endif
 			}
 			else if (_inactiveConsoleCommands.ContainsKey(commandName))
 			{
@@ -602,224 +540,25 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					}
 				}
 				_inactiveConsoleCommands.Remove(commandName);
-#if UNITY_EDITOR
 				_inactiveConsoleCommandsEDITOR.Remove(commandName);
-#endif
 			}
 			else
 			{
 				throw new ArgumentException("GameConsole: Command not found");
-			}
-				
+			}		
 		}
 		
 		/// <summary>
-		/// Removes an alias.
+		/// Load the default commands. Editor only.
 		/// </summary>
-		public void RemoveAlias(string aliasName)
-		{
-			if (_activeAliases.ContainsKey(aliasName))
-			{
-				_activeAliases.Remove(aliasName);
-			}
-			else if (_inactiveAliases.ContainsKey(aliasName))
-			{
-				_inactiveAliases.Remove(aliasName);
-			}
-			else
-			{
-				throw new ArgumentException("GameConsole: Alias not found");
-			}
-				
-		}
-	
-		/// <summary>
-		/// Input the specified inputString to the console.
-		/// </summary>
-		public void Input(string inputString)
-		{
-			if (_commandHistory.Count > _historySize)
-			{
-				_commandHistory.RemoveRange(0, _commandHistory.Count - _historySize);
-			}
-			_commandHistory.Add(inputString);
-			
-			string inputStringSanitized = inputString.Replace("$!error", "");
-			if (context)
-			{
-				inputStringSanitized = inputStringSanitized.Replace("$this", "'" + context.name + "'");
-			}
-			else
-			{
-				inputStringSanitized = inputStringSanitized.Replace("$this", "");
-			}
-			string[] consoleInput = inputStringSanitized.Split(';');
-			
-			foreach (string s in consoleInput)
-			{
-				string command = FirstWord(s);
-				string[] args = s.Substring(command.Length).Split(',');
-				
-				if (!string.IsNullOrEmpty(s.Replace(" ", "")) && !command.Contains("#") && !command.Contains("cd"))
-				{
-					if (_activeAliases.ContainsKey(command))
-					{
-						Echo(s, true);
-						Echo(_activeConsoleCommands[_activeAliases[command]](args), false);
-					}
-					else if (_activeConsoleCommands.ContainsKey(command))
-					{
-						Echo(s, true);
-						Echo(_activeConsoleCommands[command](args), false);
-					}
-					else
-					{
-						Echo(s, true);
-						Throw("GameConsole: Invalid command specified <" + command + ">");
-					}
-					
-				}
-				else if (command.Contains("#"))
-				{
-					Echo(s, true);
-				}
-				else if (command.Contains("cd"))
-				{
-					Echo(s, true);
-					ChangeContext(args);
-				}
-			}
-		}
-				
-		void ChangeContext(params string[] args)
-		{
-			// Parse the string and test for malformed strings
-			string arg = String.Join(",", args);
-			
-			if (arg.Length > 1)
-				arg = arg.Remove(0, 1);
-			
-			if (args.Length != 1)
-			{
-				Throw("Invalid argument " + "<" + arg + ">");
-				return;
-			}
-			
-			if (args[0].Replace(" ", "") == "..")
-			{
-				// Parent
-				if (context == null)
-				{
-				}
-				else if (context.transform.parent != null)
-				{
-					_context = context.transform.parent.gameObject;
-					_contextString = _contextString.Remove(_contextString.LastIndexOf("/"));
-				}
-				else
-				{
-					context = null;
-				}
-				return;
-			}
-			else if (args[0].Replace(" ", "") == "/")
-			{
-				// Root
-				context = null;
-				return;
-			}
-			
-			if (arg.IndexOf("'") == -1)
-			{
-				ChangeContext_Process(args[0].Replace(" ", ""), arg);
-				return;
-			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(0, arg.IndexOf("'")).Replace(" ", "")))
-			{
-				Throw("Invalid argument " + "<" + arg + ">");
-				return;
-			}
-			
-			if (!string.IsNullOrEmpty(arg.Substring(arg.LastIndexOf("'") + 1, arg.Length - 1 - arg.LastIndexOf("'")).Replace(" ", "")))
-			{
-				Throw("Invalid argument " + "<" + arg + ">");
-				return;
-			}
-			
-			Regex regName = new Regex("'(.*)'");
-			Match match = regName.Match(arg);
-			
-			if (match.Success)
-			{
-				ChangeContext_Process(match.Groups[1].Value, arg);
-				return;
-			}
-			else
-			{
-				Throw("Invalid argument " + "<" + arg + ">");
-				return;
-			}
-		}
-		
-		void ChangeContext_Process(string result, string arg)
-		{
-			try
-			{
-				if (context == null && !result.StartsWith("/"))
-				{
-					// Already at root
-					_context = GameObject.Find("/" + result);
-					if (context != null)
-					{
-						_contextString = "/" + result;
-						return;
-					}
-					else
-					{
-						throw new NullReferenceException();
-					}
-				}
-				else if (result.StartsWith("/"))
-				{
-					// Search from root (use field)
-					_context = GameObject.Find(result);
-					if (context != null)
-					{
-						_contextString = "/" + result;
-						return;
-					}
-					else
-					{
-						throw new NullReferenceException();
-					}
-				}
-				else
-				{
-					// Search children (use property)
-					context = context.transform.Find(result).gameObject;
-				}
-				
-				if (context == null)
-					throw new NullReferenceException();
-			}
-			catch
-			{
-				Throw("Unable to find GameObject " + "<" + arg + ">");
-				return;
-			}
-		}
-		
-		// Load default commands. Editor only.
 		public void LoadDefaults()
 		{
 			_activeConsoleCommands = new Dictionary<string, Func<string[], string>>();
 			_inactiveConsoleCommands = new Dictionary<string, Func<string[], string>>();
 			
-#if UNITY_EDITOR
 			_activeConsoleCommandsEDITOR = new Dictionary<string, string>();
 			_inactiveConsoleCommandsEDITOR = new Dictionary<string, string>();
-#endif
+			
 			_activeAliases = new Dictionary<string, string>();
 			_inactiveAliases = new Dictionary<string, string>();
 			
@@ -869,7 +608,217 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			// Random
 			AddCommand("nyan", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.NyanCat");
 		}
-//#endif
+#endif
+		
+		/// <summary>
+		/// Adds an alias.
+		/// </summary>
+		public void AddAlias(string aliasName, string commandName)
+		{
+			if (_activeAliases.ContainsKey(aliasName) ||
+#if UNITY_EDITOR
+				_inactiveAliases.ContainsKey(aliasName) ||
+#endif
+				_activeConsoleCommands.ContainsKey(aliasName) ||
+#if UNITY_EDITOR
+				_inactiveConsoleCommands.ContainsKey(aliasName) ||
+#endif
+				aliasName.Contains("#") ||
+				aliasName.StartsWith("cd") ||
+				aliasName.Contains("$this") ||
+				commandName.Contains("#") ||
+				commandName.StartsWith("cd") ||
+				commandName.Contains("$this"))
+			{
+				throw new ArgumentException("GameConsole: Alias error/already exists");
+			}
+			
+			// Make sure command exists
+			if (_activeConsoleCommands.ContainsKey(commandName))
+			{
+				_activeAliases.Add(aliasName, commandName);
+			}
+#if UNITY_EDITOR
+			else if (_inactiveConsoleCommands.ContainsKey(commandName))
+			{
+				_inactiveAliases.Add(aliasName, commandName);
+			}
+#endif
+			else
+			{
+				throw new ArgumentException("GameConsole: Alias error - command not found");
+			}
+		}
+
+		/// <summary>
+		/// Removes an alias.
+		/// </summary>
+		public void RemoveAlias(string aliasName)
+		{
+			if (_activeAliases.ContainsKey(aliasName))
+			{
+				_activeAliases.Remove(aliasName);
+			}
+#if UNITY_EDITOR
+			else if (_inactiveAliases.ContainsKey(aliasName))
+			{
+				_inactiveAliases.Remove(aliasName);
+			}
+#endif
+			else
+			{
+				throw new ArgumentException("GameConsole: Alias not found");
+			}
+				
+		}
 	
+		/// <summary>
+		/// Input the specified inputString to the console.
+		/// </summary>
+		public void Input(string inputString)
+		{
+			if (_commandHistory.Count > _historySize)
+			{
+				_commandHistory.RemoveRange(0, _commandHistory.Count - _historySize);
+			}
+			_commandHistory.Add(inputString);
+			
+			inputString = inputString.Sanitize();
+			
+			if (context)
+			{
+				inputString = inputString.Replace("$this", "\"" + context.name + "\"");
+			}
+			else
+			{
+				inputString = inputString.Replace("$this", "");
+			}
+			
+			string[] consoleInput = inputString.ParseLines();
+			
+			foreach (string s in consoleInput)
+			{
+				string command = s.ParseCommand();
+				string[] args = s.ParseArguments();
+				
+				if (!s.IsBlankCommand() && !command.StartsWith("#") && !command.StartsWith("cd"))
+				{
+					if (_activeAliases.ContainsKey(command))
+					{
+						Echo(s, true);
+						Echo(_activeConsoleCommands[_activeAliases[command]](args), false);
+					}
+					else if (_activeConsoleCommands.ContainsKey(command))
+					{
+						Echo(s, true);
+						Echo(_activeConsoleCommands[command](args), false);
+					}
+					else
+					{
+						Echo(s, true);
+						Echo(ConsoleErrors.InvalidCommandError(command), true);
+					}
+					
+				}
+				else if (command.StartsWith("#"))
+				{
+					Echo(s, true);
+				}
+				else if (command.StartsWith("cd.."))
+				{
+					Echo(s, true);
+					ChangeContext("..");
+				}
+				else if (command.StartsWith("cd"))
+				{
+					Echo(s, true);
+					ChangeContext(args);
+				}
+			}
+		}
+				
+		void ChangeContext(params string[] args)
+		{
+			if (args.Length != 1)
+			{
+				Throw(ConsoleErrors.InvalidArgumentError);
+				return;
+			}
+			
+			if (args[0] == "..")
+			{
+				// Parent
+				if (context == null)
+				{
+				}
+				else if (context.transform.parent != null)
+				{
+					_context = context.transform.parent.gameObject;
+					_contextString = _contextString.Remove(_contextString.LastIndexOf("/"));
+				}
+				else
+				{
+					context = null;
+				}
+				return;
+			}
+			else if (args[0] == "/")
+			{
+				// Root
+				context = null;
+				return;
+			}
+			
+			ChangeContext_Process(args[0]);
+			return;
+		}
+		
+		void ChangeContext_Process(string result)
+		{
+			try
+			{
+				if (context == null && !result.StartsWith("/"))
+				{
+					// Already at root
+					_context = GameObject.Find("/" + result);
+					if (context != null)
+					{
+						_contextString = "/" + result;
+						return;
+					}
+					else
+					{
+						throw new NullReferenceException();
+					}
+				}
+				else if (result.StartsWith("/"))
+				{
+					// Search from root (use field)
+					_context = GameObject.Find(result);
+					if (context != null)
+					{
+						_contextString = result;
+						return;
+					}
+					else
+					{
+						throw new NullReferenceException();
+					}
+				}
+				else
+				{
+					// Search children (use property)
+					context = context.transform.Find(result).gameObject;
+				}
+				
+				if (context == null)
+					throw new NullReferenceException();
+			}
+			catch
+			{
+				Throw("Unable to find GameObject " + "<" + result + ">");
+				return;
+			}
+		}
 	}
 }

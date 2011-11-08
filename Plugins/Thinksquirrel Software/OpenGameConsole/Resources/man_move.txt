@@ -1,1 +1,1 @@
-4 arguments ('GameObject',float,float,float): Moves the GameObject (specified between single quotes) to the target location.
+4 arguments (GameObject,float,float,float): Moves the GameObject to the target location. Use quotes if the GameObject name contains a space.

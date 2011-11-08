@@ -7,9 +7,10 @@ using System.Xml.Serialization;
 namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 {
 	public static class OGCSerialization
-	{
+	{	
 		public static void SaveData()
 		{
+#if UNITY_EDITOR
 			try
 			{
 				DictionaryWrapper activeWrapper = new DictionaryWrapper(GameConsole.instance.activeConsoleCommandsEDITOR);
@@ -20,7 +21,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 				
 				XmlSerializer serializer = new XmlSerializer(typeof(DictionaryWrapper));
 				
-				TextWriter textWriterActive = new StreamWriter(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/active-commands.xml");
+				TextWriter textWriterActive = new StreamWriter(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/Resources/active-commands.xml");
 				serializer.Serialize(textWriterActive, activeWrapper);
 				textWriterActive.Close();
 				
@@ -28,7 +29,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 				serializer.Serialize(textWriterInactive, inactiveWrapper);
 				textWriterInactive.Close();
 				
-				TextWriter textWriterActiveAlias = new StreamWriter(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/active-aliases.xml");
+				TextWriter textWriterActiveAlias = new StreamWriter(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/Resources/active-aliases.xml");
 				serializer.Serialize(textWriterActiveAlias, activeAliasWrapper);
 				textWriterActiveAlias.Close();
 				
@@ -40,6 +41,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 			{
 				Debug.LogError("OpenGameConsole: Unable to save data!");
 			}
+#endif
 		}
 		
 		public static void LoadData()
@@ -48,45 +50,53 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 			{
 				XmlSerializer deserializer = new XmlSerializer(typeof(DictionaryWrapper));
 				
-				TextReader textReaderActive = new StreamReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/active-commands.xml");
+				TextAsset activeText = Resources.Load("active-commands", typeof(TextAsset)) as TextAsset;
+				TextReader textReaderActive = new StringReader(activeText.text);
 				DictionaryWrapper activeWrapper = (DictionaryWrapper)deserializer.Deserialize(textReaderActive);
 				textReaderActive.Close();
-				
-				TextReader textReaderInactive = new StreamReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/inactive-commands.xml");
+#if UNITY_EDITOR
+				TextReader textReaderInactive = new StringReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/inactive-commands.xml");
 				DictionaryWrapper inactiveWrapper = (DictionaryWrapper)deserializer.Deserialize(textReaderInactive);
 				textReaderInactive.Close();
-				
-				TextReader textReaderActiveAlias = new StreamReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/active-aliases.xml");
+#endif			
+				TextAsset activeTextAlias = Resources.Load("active-aliases", typeof(TextAsset)) as TextAsset;
+				TextReader textReaderActiveAlias = new StringReader(activeTextAlias.text);
 				DictionaryWrapper activeAliasWrapper = (DictionaryWrapper)deserializer.Deserialize(textReaderActiveAlias);
 				textReaderActiveAlias.Close();
-				
+#if UNITY_EDITOR
 				TextReader textReaderInactiveAlias = new StreamReader(Application.dataPath + "/Plugins/Thinksquirrel Software/OpenGameConsole/DB/inactive-aliases.xml");
 				DictionaryWrapper inactiveAliasWrapper = (DictionaryWrapper)deserializer.Deserialize(textReaderInactiveAlias);
 				textReaderInactiveAlias.Close();
-				
+#endif				
 				Dictionary<string, string> active = activeWrapper.GetMap();
+#if UNITY_EDITOR
 				Dictionary<string, string> inactive = inactiveWrapper.GetMap();
-				
+#endif				
 				Dictionary<string, string> activeAlias = activeAliasWrapper.GetMap();
+#if UNITY_EDITOR
 				Dictionary<string, string> inactiveAlias = inactiveAliasWrapper.GetMap();
-				
+#endif				
 				foreach (KeyValuePair<string, string> kvp in active)
 				{
 					GameConsole.instance.AddCommand(kvp.Key, kvp.Value);
 				}
+#if UNITY_EDITOR
 				foreach (KeyValuePair<string, string> kvp in inactive)
 				{
 					GameConsole.instance.AddCommand(kvp.Key, kvp.Value);
 					GameConsole.instance.ToggleCommand(kvp.Key);
 				}
+#endif
 				foreach (KeyValuePair<string, string> kvp in activeAlias)
 				{
 					GameConsole.instance.AddAlias(kvp.Key, kvp.Value);
 				}
+#if UNITY_EDITOR
 				foreach (KeyValuePair<string, string> kvp in inactiveAlias)
 				{
 					GameConsole.instance.AddAlias(kvp.Key, kvp.Value);
 				}
+#endif
 			}
 			catch
 			{
