@@ -145,5 +145,32 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 				}
 			}
 		}
+	
+		public static void SaveConsolePrefs()
+		{
+			PlayerPrefs.SetInt("OGC_bufferSize", GameConsole.instance.bufferSize);
+			PlayerPrefs.SetInt("OGC_historySize", GameConsole.instance.historySize);
+			PlayerPrefs.SetInt("OGC_streamSpacing", GameConsole.instance.streamSpacing);
+			
+			PlayerPrefs.SetInt("OGC_throwErrors", System.Convert.ToInt32(GameConsole.instance.throwErrors));
+			PlayerPrefs.SetInt("OGC_verbose", System.Convert.ToInt32(GameConsole.instance.verbose));
+			
+			PlayerPrefs.SetInt("OGC_savedPrefs", 1);
+		}
+		
+		public static void LoadConsolePrefs()
+		{
+			if (!PlayerPrefs.HasKey("OGC_savedPrefs"))
+			{
+				SaveConsolePrefs();
+			}
+			
+			GameConsole.instance.bufferSize = PlayerPrefs.GetInt("OGC_bufferSize");
+			GameConsole.instance.historySize = PlayerPrefs.GetInt("OGC_historySize");
+			GameConsole.instance.streamSpacing = PlayerPrefs.GetInt("OGC_streamSpacing");
+			
+			GameConsole.instance.throwErrors = System.Convert.ToBoolean(PlayerPrefs.GetInt("OGC_throwErrors"));
+			GameConsole.instance.verbose = System.Convert.ToBoolean(PlayerPrefs.GetInt("OGC_verbose"));
+		}
 	}
 }

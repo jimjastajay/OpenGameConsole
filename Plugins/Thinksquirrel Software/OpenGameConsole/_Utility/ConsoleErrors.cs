@@ -7,6 +7,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 	{
 		public const string InvalidArgumentError = "$!error$Invalid argument(s)";
 		public const string VectorParsingError = "$!error$Vector parsing error";
+		public const string CommandExecutionError = "$!error$Command execution error";
 		
 		public static string InvalidCommandError(string command)
 		{

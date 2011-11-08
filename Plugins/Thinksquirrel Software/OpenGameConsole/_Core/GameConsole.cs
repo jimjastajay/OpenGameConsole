@@ -109,6 +109,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		{
 			_instance = this;
 			OGCSerialization.LoadData();
+			OGCSerialization.LoadConsolePrefs();
 			context = null;
 		}
 		
@@ -425,7 +426,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 				commandName.Contains("#") ||
 				commandName.Contains("cd") ||
-				commandName.Contains("$this"))
+				commandName.Contains("$THIS"))
 			{
 				throw new ArgumentException("GameConsole: Command error/already exists");
 			}
@@ -581,6 +582,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			// Debugging
 			AddCommand("log", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Log");
 			AddCommand("print", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Print");
+			AddAlias("echo", "print");
 			AddCommand("memusage", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MemUsage");
 			AddAlias("mem", "memusage");
 			AddCommand("garbagecollect", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.GarbageCollect");
@@ -625,10 +627,10 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 				aliasName.Contains("#") ||
 				aliasName.StartsWith("cd") ||
-				aliasName.Contains("$this") ||
+				aliasName.Contains("$THIS") ||
 				commandName.Contains("#") ||
 				commandName.StartsWith("cd") ||
-				commandName.Contains("$this"))
+				commandName.Contains("$THIS"))
 			{
 				throw new ArgumentException("GameConsole: Alias error/already exists");
 			}
@@ -685,15 +687,6 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			
 			inputString = inputString.Sanitize();
 			
-			if (context)
-			{
-				inputString = inputString.Replace("$this", "\"" + context.name + "\"");
-			}
-			else
-			{
-				inputString = inputString.Replace("$this", "");
-			}
-			
 			string[] consoleInput = inputString.ParseLines();
 			
 			foreach (string s in consoleInput)
@@ -706,11 +699,29 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					if (_activeAliases.ContainsKey(command))
 					{
 						Echo(s, true);
+						
+						if (context)
+						{
+							args.ParseTokens("THIS", context.name);
+						}
+						else
+						{
+							args.ParseTokens("THIS", null);
+						}
+						
 						Echo(_activeConsoleCommands[_activeAliases[command]](args), false);
 					}
 					else if (_activeConsoleCommands.ContainsKey(command))
 					{
 						Echo(s, true);
+						if (context)
+						{
+							args.ParseTokens("THIS", context.name);
+						}
+						else
+						{
+							args.ParseTokens("THIS", null);
+						}
 						Echo(_activeConsoleCommands[command](args), false);
 					}
 					else
@@ -732,6 +743,14 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				else if (command.StartsWith("cd"))
 				{
 					Echo(s, true);
+					if (context)
+					{
+						args.ParseTokens("THIS", context.name);
+					}
+					else
+					{
+						args.ParseTokens("THIS", null);
+					}
 					ChangeContext(args);
 				}
 			}

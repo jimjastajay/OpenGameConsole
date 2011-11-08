@@ -4,6 +4,7 @@
     <string>man</string>
     <string>clr</string>
     <string>cls</string>
+    <string>echo</string>
     <string>mem</string>
     <string>gc</string>
     <string>list</string>
@@ -19,6 +20,7 @@
     <string>help</string>
     <string>clear</string>
     <string>clear</string>
+    <string>print</string>
     <string>memusage</string>
     <string>garbagecollect</string>
     <string>listobjects</string>

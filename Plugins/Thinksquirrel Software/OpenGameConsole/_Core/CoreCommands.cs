@@ -107,7 +107,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				"+        o        o          +      o\n";
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -135,6 +135,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			try
 			{
 				GameConsole.instance.throwErrors = System.Convert.ToBoolean(args[0]);
+				OGCSerialization.SaveConsolePrefs();
 				return "Throw errors set to: " + GameConsole.instance.throwErrors;
 			}
 			catch
@@ -142,7 +143,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return ConsoleErrors.InvalidArgumentError;
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -162,6 +163,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			try
 			{
 				GameConsole.instance.bufferSize = System.Convert.ToInt32(args[0]);
+				OGCSerialization.SaveConsolePrefs();
 				return "Line buffer size set to: " + GameConsole.instance.bufferSize;
 			}
 			catch
@@ -169,7 +171,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return ConsoleErrors.InvalidArgumentError;
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -189,6 +191,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			try
 			{
 				GameConsole.instance.verbose = System.Convert.ToBoolean(args[0]);
+				OGCSerialization.SaveConsolePrefs();
 				return "Verbose mode set to: " + GameConsole.instance.verbose;
 			}
 			catch
@@ -196,7 +199,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return ConsoleErrors.InvalidArgumentError;
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -216,6 +219,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			try
 			{
 				GameConsole.instance.historySize = System.Convert.ToInt32(args[0]);
+				OGCSerialization.SaveConsolePrefs();
 				return "Line history size set to: " + GameConsole.instance.historySize;
 			}
 			catch
@@ -223,7 +227,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return ConsoleErrors.InvalidArgumentError;
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -243,6 +247,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			try
 			{
 				GameConsole.instance.streamSpacing = System.Convert.ToInt32(args[0]);
+				OGCSerialization.SaveConsolePrefs();
 				return "Line spacing set to: " + GameConsole.instance.streamSpacing;
 			}
 			catch
@@ -250,7 +255,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return ConsoleErrors.InvalidArgumentError;
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif			
 		}
 		
@@ -281,7 +286,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					commands += "\n";
 				}
 				commands += "\nType help/man <command name> for more information.\n" +
-					"$this (the currently selected object) can be used in place of \"GameObject Name\"\n" +
+					"$THIS (the currently selected object) can be used in place of \"GameObject Name\"\n" +
 					"Semicolons (;) denote a new line.";
 				return commands;
 			}
@@ -304,7 +309,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return ConsoleErrors.ResourceNotFoundError(args[0]);
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -353,7 +358,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			
 			return ConsoleErrors.InvalidArgumentError;
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -372,7 +377,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			
 			return ConsoleErrors.InvalidArgumentError;
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -391,7 +396,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			
 			return ConsoleErrors.InvalidArgumentError;
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -428,7 +433,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return ConsoleErrors.InvalidArgumentError;
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -464,7 +469,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				return ConsoleErrors.InvalidArgumentError;
 			}
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -500,7 +505,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					" | Y: " + a.y +
 					" | Z: " + a.z;
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -536,7 +541,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					" | Y: " + a.y +
 					" | Z: " + a.z;
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -563,7 +568,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				
 			return "Sent message: " + args[1] + " to " + args[0];
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -611,7 +616,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				
 			return args[0];
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
@@ -629,7 +634,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			Debug.Log(args[0]);
 			return args[0];
 #else
-			return string.Empty;
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 	}

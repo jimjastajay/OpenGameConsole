@@ -80,7 +80,28 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 			
 			return results.ToArray();
 		}
-
+		
+		public static string ParseTokens(this string input, string token, string replacement)
+		{
+			if (replacement == null)
+				replacement = "/dev/null";
+					
+			return input.Replace("$" + token, replacement);
+		}
+		
+		public static string[] ParseTokens(this string[] input, string token, string replacement)
+		{
+			if (replacement == null)
+				replacement = "/dev/null";
+			
+			for (int i = 0; i < input.Length; i++)
+			{
+				input[i] = input[i].Replace("$" + token, replacement);
+			}
+			
+			return input;
+		}
+		
 		public static Vector3 ParseVector3(string xString, string yString, string zString)
 		{
 			return new Vector3(System.Convert.ToSingle(xString), System.Convert.ToSingle(yString), System.Convert.ToSingle(zString));
