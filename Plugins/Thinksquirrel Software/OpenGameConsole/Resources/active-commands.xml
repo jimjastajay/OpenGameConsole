@@ -2,11 +2,7 @@
 <DictionaryWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Keys>
     <string>help</string>
-    <string>c_linespace</string>
-    <string>c_history</string>
-    <string>c_verbose</string>
-    <string>c_buffer</string>
-    <string>c_throwerrors</string>
+    <string>ogc</string>
     <string>clear</string>
     <string>log</string>
     <string>print</string>
@@ -14,6 +10,8 @@
     <string>garbagecollect</string>
     <string>listobjects</string>
     <string>sendmessage</string>
+    <string>get</string>
+    <string>run</string>
     <string>timescale</string>
     <string>gravity</string>
     <string>loc</string>
@@ -23,11 +21,7 @@
   </Keys>
   <Values>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Help</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.LineSpace</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.History</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Verbose</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Buffer</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ThrowErrors</string>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ConsoleSettings</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Clear</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Log</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Print</string>
@@ -35,6 +29,8 @@
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.GarbageCollect</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ListObjects</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage</string>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Get</string>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Run</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeScale</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Gravity</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Loc</string>

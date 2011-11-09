@@ -11,6 +11,8 @@
     <string>ls</string>
     <string>li</string>
     <string>send</string>
+    <string>download</string>
+    <string>dl</string>
     <string>time</string>
     <string>grav</string>
     <string>mv</string>
@@ -27,6 +29,8 @@
     <string>listobjects</string>
     <string>listobjects</string>
     <string>sendmessage</string>
+    <string>get</string>
+    <string>get</string>
     <string>timescale</string>
     <string>gravity</string>
     <string>move</string>

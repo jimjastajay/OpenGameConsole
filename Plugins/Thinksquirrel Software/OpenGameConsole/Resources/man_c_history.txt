@@ -1,2 +1,0 @@
-0 arguments: Returns the current line history size.
-1 argument (int): Changes the line history size of the console. 

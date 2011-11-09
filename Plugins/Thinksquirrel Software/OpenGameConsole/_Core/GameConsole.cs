@@ -275,7 +275,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		}
 			
 		// Echo (also records to stream)
-		private void Echo(string message, bool input)
+		public void Echo(string message, bool input)
 		{
 			if (!string.IsNullOrEmpty(message))
 			{
@@ -285,19 +285,19 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					error = true;
 					message = message.Remove(0, 8);
 				}
-				string seperator = "--> ";
+				string separator = "";
 				string date = "";
 				
 				if (input)
 				{
-					seperator = "  > ";
+					separator = "  > ";
 					date = DateTime.Now.ToString();
 				}
 			
 				if (error)
-					seperator = "--> [Error] ";
+					separator = "[Error] ";
 			
-				string newMessage = date + seperator + message;
+				string newMessage = date + separator + message;
 				for (int i = 0; i < streamSpacing; i++)
 				{
 					newMessage += "\n";	
@@ -568,11 +568,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			AddAlias("man", "help");
 			
 			// Console settings
-			AddCommand("c_linespace", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.LineSpace");
-			AddCommand("c_history", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.History");
-			AddCommand("c_verbose", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Verbose");
-			AddCommand("c_buffer", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Buffer");
-			AddCommand("c_throwerrors", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ThrowErrors");
+			AddCommand("ogc", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ConsoleSettings");
 			
 			// Clearing
 			AddCommand("clear", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Clear");
@@ -595,6 +591,12 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			AddAlias("li", "listobjects");
 			AddCommand("sendmessage", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage");
 			AddAlias("send", "sendmessage");
+			
+			// Get and Run
+			AddCommand("get", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Get");
+			AddAlias("download", "get");
+			AddAlias("dl", "get");
+			AddCommand("run", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Run");
 			
 			// Physics
 			AddCommand("timescale", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeScale");
@@ -727,7 +729,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					else
 					{
 						Echo(s, true);
-						Echo(ConsoleErrors.InvalidCommandError(command), true);
+						Echo(ConsoleErrors.InvalidCommandError(command), false);
 					}
 					
 				}
@@ -760,7 +762,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		{
 			if (args.Length != 1)
 			{
-				Throw(ConsoleErrors.InvalidArgumentError);
+				Echo(ConsoleErrors.InvalidArgumentError, true);
 				return;
 			}
 			

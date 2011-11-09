@@ -13,10 +13,25 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 		{
 			return "$!error$Invalid command: <" + command + ">";
 		}
+		
+		public static string OptionExceptionError(string command, string message)
+		{
+			return "$!error$" + command + ": " + message + "\nTry `" + command + " --help' for more information.";
+		}
+		
+		public static string LockFileError(string file)
+		{
+			return "$!error$Lock file: <" + file + "> found - unable to continue";
+		}
 
 		public static string ResourceNotFoundError(string resource)
 		{
 			return "$!error$Resource not found: <" + resource + ">";
+		}
+		
+		public static string DownloadError(string error)
+		{
+			return "$!error$Download error : <" + error + ">";
 		}
 		
 		public static string GameObjectNotFoundError(string gameObj)

@@ -1,11 +1,7 @@
 /// These defines control compilation of each command - it is recommended to undefine any commands that are not enabled.
 #define NYAN_CAT
 #define CLEAR
-#define THROW_ERRORS
-#define BUFFER
-#define VERBOSE
-#define HISTORY
-#define LINE_SPACE
+#define CONSOLE_SETTINGS
 #define HELP
 #define LIST_OBJECTS
 #define MEM_USAGE
@@ -18,10 +14,14 @@
 #define LOC
 #define PRINT
 #define LOG
+#define GET
+#define RUN
 using UnityEngine;
 using ThinksquirrelSoftware.OpenGameConsole;
 using ThinksquirrelSoftware.OpenGameConsole.Utility;
+using NDesk.Options;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -33,10 +33,19 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #if NYAN_CAT
 		private static AudioSource PlayNyan(AudioClip clip, Vector3 position)
 		{
-			GameObject go = new GameObject("nyan");
+			GameObject go = null;
+			if (GameObject.Find("nyan.lock"))
+			{
+				go = GameObject.Find("nyan.lock");
+			}
+			else
+			{
+				go = new GameObject("nyan.lock");
+			}
 			go.transform.position = position;
 			AudioSource source = go.AddComponent<AudioSource>();
 			source.clip = clip;
+			source.loop = true;
 			source.volume = 1;
 			source.Play();
 			return source;
@@ -62,28 +71,20 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				if (nyan.isPlaying)
 				{
 					nyan.Stop();
+					UnityEngine.Object.DestroyImmediate(nyan.gameObject);
 					return "Awww...";
 				}
 				else
 				{
-					nyan.Play();
+					UnityEngine.Object.DestroyImmediate(nyan);
+					nyan = PlayNyan(Resources.Load("nyan") as AudioClip, Vector3.zero);
 					return 
 					"Yes son. Now we are a family again.\n" +
-					"+        o        +                 o\n" + 
-					"     +               o       +       +\n" +
-					"         o                +\n" +
-					"      o       +          +           +\n" +
-					"+        o        o          +      o\n" +
-					"-_-_-_-_-_-_-_,------,      o \n" +
-					"_-_-_-_-_-_-_-|      /\\_/\\  \n" +
-					"-_-_-_-_-_-_-~|__( ^ .^)  + \n" +
-					"_-_-_-_-_-_-_-\"\"  \"\"      \n" +
-					"+        o        +                 o\n" + 
-					"     +               o       +       +\n" +
-					"         o                +\n" +
-					"      o       +          +           +\n" +
-					"+        o        o          +      o\n";
-					
+					",*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`\n" +
+					".,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,\n" +
+					"*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^         ,---/V\\\n" +
+					"`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.    ~|__(o.o)\n" +
+					"^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'  UU  UU";
 				}
 			}
 			else
@@ -91,175 +92,98 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				nyan = PlayNyan(Resources.Load("nyan") as AudioClip, Vector3.zero);
 				return 
 				"Yes son. Now we are a family again.\n" +
-				"+        o        +                 o\n" + 
-				"     +               o       +       +\n" +
-				"         o                +\n" +
-				"      o       +          +           +\n" +
-				"+        o        o          +      o\n" +
-				"-_-_-_-_-_-_-_,------,      o \n" +
-				"_-_-_-_-_-_-_-|      /\\_/\\  \n" +
-				"-_-_-_-_-_-_-~|__( ^ .^)  + \n" +
-				"_-_-_-_-_-_-_-\"\"  \"\"      \n" +
-				"+        o        +                 o\n" + 
-				"     +               o       +       +\n" +
-				"         o                +\n" +
-				"      o       +          +           +\n" +
-				"+        o        o          +      o\n";
+				",*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`\n" +
+				".,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,\n" +
+				"*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^         ,---/V\\\n" +
+				"`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.    ~|__(o.o)\n" +
+				"^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'  UU  UU";
 			}
 #else
 			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
-		public static string Clear(string[] args)
+		public static string Clear(params string[] args)
 		{
 #if CLEAR
 			GameConsole.instance.ClearStream();
-#endif
 			return string.Empty;
-		}
-		
-		public static string ThrowErrors(string[] args)
-		{	
-#if THROW_ERRORS			
-			if (args.Length == 0)
-			{
-				return "Throw errors currently set to: " + GameConsole.instance.throwErrors;
-			}
-			
-			if (args.Length != 1)
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-			
-			try
-			{
-				GameConsole.instance.throwErrors = System.Convert.ToBoolean(args[0]);
-				OGCSerialization.SaveConsolePrefs();
-				return "Throw errors set to: " + GameConsole.instance.throwErrors;
-			}
-			catch
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
 #else
 			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
-		public static string Buffer(string[] args)
+		public static string ConsoleSettings(params string[] args)
 		{
-#if BUFFER			
+#if CONSOLE_SETTINGS
 			if (args.Length == 0)
 			{
-				return "Line buffer size currently set to: " + GameConsole.instance.bufferSize;
+				return ConsoleErrors.OptionExceptionError("ogc", "Invalid option(s) or no options specified");
 			}
 			
-			if (args.Length != 1)
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-			
+			bool noOptions = true;
+			bool showHelp = false;
+			bool showVersion = false;
+			bool showList = false;		
+
+			var options = new OptionSet() {
+            { "l|list", "list the current console settings.", o => { showList = o != null; noOptions = false; } },
+			{ "s|linespace=", "the amount of {LINES} of whitespace between console lines.\nthis must be an integer.", (int o) => { GameConsole.instance.streamSpacing = o; noOptions = false; } },
+            { "H|history=", "the size, in {LINES} of the command buffer.\nthis must be an integer.", (int o) => { GameConsole.instance.historySize = o; noOptions = false; } },
+			{ "B|buffer=", "the size, in {LINES} of the line buffer.\nthis must be an integer.", (int o) => { GameConsole.instance.bufferSize = o; noOptions = false; } },
+            { "V|verbose", "send console commands to the Unity log.\nonly useful if logging is disabled.", o => { GameConsole.instance.verbose = o != null; noOptions = false; } },
+			{ "S|silent", "don't send console commands to the Unity log.\nonly useful if logging is enabled.", o => { if (o != null) GameConsole.instance.verbose = false; noOptions = false; } },
+            { "E|throwerrors",  "throw errors to the Unity log.\nonly useful if throwing errors is disabled.", o => { GameConsole.instance.throwErrors = o != null; noOptions = false; } },
+			{ "N|noerrors",  "don't throw errors to the Unity log.\nonly useful if throwing errors is enabled.", o => { if (o != null) GameConsole.instance.throwErrors = false; noOptions = false; } },
+			{ "version",  "show version information and exit", o => { showVersion = o != null; noOptions = false; } },
+			{ "h|help",  "show this message and exit", o => { showHelp = o != null; noOptions = false; } },};
+		
 			try
 			{
-				GameConsole.instance.bufferSize = System.Convert.ToInt32(args[0]);
-				OGCSerialization.SaveConsolePrefs();
-				return "Line buffer size set to: " + GameConsole.instance.bufferSize;
+				options.Parse(args);
 			}
-			catch
+			catch (OptionException e)
 			{
-				return ConsoleErrors.InvalidArgumentError;
+				return ConsoleErrors.OptionExceptionError("ogc", e.Message);
 			}
+			
+			if (noOptions)
+			{
+				return ConsoleErrors.OptionExceptionError("ogc", "Invalid option(s) or no options specified");
+			}
+			if (showVersion)
+			{
+				return OGCParse.ExpatLicense("OpenGameConsole Settings", "1.0", "2011", "Thinksquirrel Software, LLC");
+			}
+			if (showHelp)
+			{
+				TextWriter helpText = new StringWriter();
+				options.WriteOptionDescriptions(helpText);
+				return
+					"Usage: ogc [OPTIONS]\n" + 
+					"Change the console settings.\n" +
+					"Options:\n" +
+					helpText.ToString() + "\n" +
+					"Report bugs to: support@thinksquirrel.com";
+			}
+			
+			if (showList)
+			{
+				return
+					"Console settings:\n" +
+					"Linespace - " + GameConsole.instance.streamSpacing + "\n" +
+					"history - " + GameConsole.instance.historySize + "\n" +
+					"buffer - " + GameConsole.instance.bufferSize + "\n" +
+					"verbose - " + GameConsole.instance.verbose + "\n" +
+					"throwerrors - " + GameConsole.instance.throwErrors;
+			}			
+			return string.Empty;
 #else
-			return ConsoleErrors.CommandExecutionError;
+			ConsoleErrors.CommandExecutionError;
 #endif
 		}
 		
-		public static string Verbose(string[] args)
-		{
-#if VERBOSE
-			if (args.Length == 0)
-			{
-				return "Verbose mode currently set to: " + GameConsole.instance.verbose;
-			}
-			
-			if (args.Length != 1)
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-			
-			try
-			{
-				GameConsole.instance.verbose = System.Convert.ToBoolean(args[0]);
-				OGCSerialization.SaveConsolePrefs();
-				return "Verbose mode set to: " + GameConsole.instance.verbose;
-			}
-			catch
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-#else
-			return ConsoleErrors.CommandExecutionError;
-#endif
-		}
-		
-		public static string History(string[] args)
-		{
-#if HISTORY			
-			if (args.Length == 0)
-			{
-				return "Line history size currently set to: " + GameConsole.instance.historySize;
-			}
-			
-			if (args.Length != 1)
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-			
-			try
-			{
-				GameConsole.instance.historySize = System.Convert.ToInt32(args[0]);
-				OGCSerialization.SaveConsolePrefs();
-				return "Line history size set to: " + GameConsole.instance.historySize;
-			}
-			catch
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-#else
-			return ConsoleErrors.CommandExecutionError;
-#endif
-		}
-		
-		public static string LineSpace(string[] args)
-		{
-#if LINE_SPACE			
-			if (args.Length == 0)
-			{
-				return "Line spacing currently set to: " + GameConsole.instance.streamSpacing;
-			}
-			
-			if (args.Length != 1)
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-			
-			try
-			{
-				GameConsole.instance.streamSpacing = System.Convert.ToInt32(args[0]);
-				OGCSerialization.SaveConsolePrefs();
-				return "Line spacing set to: " + GameConsole.instance.streamSpacing;
-			}
-			catch
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-#else
-			return ConsoleErrors.CommandExecutionError;
-#endif			
-		}
-		
-		public static string Help(string[] args)
+		public static string Help(params string[] args)
 		{
 #if HELP
 			if (args.Length > 1)
@@ -313,7 +237,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 		}
 		
-		public static string ListObjects(string[] args)
+		public static string ListObjects(params string[] args)
 		{
 #if LIST_OBJECTS	
 			if (args.Length > 0)
@@ -362,7 +286,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 		}
 		
-		public static string MemUsage(string[] args)
+		public static string MemUsage(params string[] args)
 		{
 #if MEM_USAGE
 			if (args.Length > 0)
@@ -381,7 +305,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 		}
 		
-		public static string GarbageCollect(string[] args)
+		public static string GarbageCollect(params string[] args)
 		{
 #if GARBAGE_COLLECT
 			if (args.Length > 0)
@@ -403,7 +327,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// <summary>
 		/// Changes the physics gravity vector.
 		/// </summary>
-		public static string Gravity(string[] args)
+		public static string Gravity(params string[] args)
 		{
 #if GRAVITY
 			if (args.Length > 3)
@@ -441,7 +365,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// <summary>
 		/// Changes the physics time scale.
 		/// </summary>
-		public static string TimeScale(string[] args)
+		public static string TimeScale(params string[] args)
 		{
 #if TIME_SCALE
 			if (args.Length > 1)
@@ -473,7 +397,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 		}
 		
-		public static string Move(string[] args)
+		public static string Move(params string[] args)
 		{
 #if MOVE
 			if (args.Length != 4)
@@ -509,7 +433,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 		}
 		
-		public static string MoveRB(string[] args)
+		public static string MoveRB(params string[] args)
 		{	
 #if MOVE_RB
 			if (args.Length != 4)
@@ -549,7 +473,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// <summary>
 		/// Send a message to a Game Object.
 		/// </summary>
-		public static string SendMessage(string[] args)
+		public static string SendMessage(params string[] args)
 		{	
 #if SEND_MESSAGE
 			if (args.Length != 2)
@@ -575,7 +499,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// <summary>
 		/// Finds the location of a GameObject.
 		/// </summary>
-		public static string Loc(string[] args)
+		public static string Loc(params string[] args)
 		{	
 #if LOC
 			if (args.Length != 2)
@@ -606,7 +530,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// <summary>
 		/// Print a message to the console.
 		/// </summary>
-		public static string Print(string[] args)
+		public static string Print(params string[] args)
 		{
 #if PRINT
 			if (args.Length != 1)
@@ -623,7 +547,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// <summary>
 		/// Log a message to the Unity Console.
 		/// </summary>
-		public static string Log(string[] args)
+		public static string Log(params string[] args)
 		{	
 #if LOG
 			if (args.Length != 1)
@@ -633,6 +557,52 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			
 			Debug.Log(args[0]);
 			return args[0];
+#else
+			return ConsoleErrors.CommandExecutionError;
+#endif
+		}
+
+		/// <summary>
+		/// Get a file and print it.
+		/// </summary>
+		public static string Get(params string[] args)
+		{	
+#if GET
+			if (args.Length != 1)
+			{
+				return ConsoleErrors.InvalidArgumentError;
+			}
+			
+			if (GameObject.Find("ogc-dl.lock"))
+			{
+				return ConsoleErrors.LockFileError("ogc-dl.lock");
+			}
+			OGCDownloader downloader = new GameObject("ogc-dl.lock").AddComponent<OGCDownloader>();
+			downloader.StartDownload(args[0], true);
+			return "Downloading: " + args[0];
+#else
+			return ConsoleErrors.CommandExecutionError;
+#endif
+		}
+		
+		/// <summary>
+		/// Run a console script.
+		/// </summary>
+		public static string Run(params string[] args)
+		{	
+#if RUN
+			if (args.Length != 1)
+			{
+				return ConsoleErrors.InvalidArgumentError;
+			}
+			
+			if (GameObject.Find("ogc-dl.lock"))
+			{
+				return ConsoleErrors.LockFileError("ogc-dl.lock");
+			}
+			OGCDownloader downloader = new GameObject("ogc-dl.lock").AddComponent<OGCDownloader>();
+			downloader.StartDownload(args[0], false);
+			return "Downloading: " + args[0];
 #else
 			return ConsoleErrors.CommandExecutionError;
 #endif
