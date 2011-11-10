@@ -1,38 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DictionaryWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Keys>
-    <string>help</string>
+    <string>version</string>
+    <string>man</string>
     <string>ogc</string>
     <string>clear</string>
-    <string>log</string>
-    <string>print</string>
-    <string>memusage</string>
-    <string>garbagecollect</string>
+    <string>echo</string>
+    <string>gc</string>
     <string>listobjects</string>
     <string>sendmessage</string>
     <string>get</string>
     <string>run</string>
-    <string>timescale</string>
-    <string>gravity</string>
+    <string>physics</string>
+    <string>time</string>
     <string>loc</string>
     <string>move</string>
     <string>move_rb</string>
     <string>nyan</string>
   </Keys>
   <Values>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Version</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Help</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ConsoleSettings</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Clear</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Log</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Print</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MemUsage</string>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Echo</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.GarbageCollect</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ListObjects</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Get</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Run</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeScale</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Gravity</string>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.PhysicsSettings</string>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeSettings</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Loc</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Move</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MoveRB</string>

@@ -1,1 +1,0 @@
-1 argument ('string'): Logs the text between single quotes to the Unity debug log.

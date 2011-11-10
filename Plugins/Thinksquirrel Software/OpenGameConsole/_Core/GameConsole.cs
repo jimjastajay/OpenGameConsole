@@ -563,9 +563,11 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			_activeAliases = new Dictionary<string, string>();
 			_inactiveAliases = new Dictionary<string, string>();
 			
+			// Version
+			AddCommand("version", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Version");
+			
 			// Help
-			AddCommand("help", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Help");
-			AddAlias("man", "help");
+			AddCommand("man", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Help");
 			
 			// Console settings
 			AddCommand("ogc", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ConsoleSettings");
@@ -576,13 +578,8 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			AddAlias("cls", "clear");
 			
 			// Debugging
-			AddCommand("log", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Log");
-			AddCommand("print", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Print");
-			AddAlias("echo", "print");
-			AddCommand("memusage", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MemUsage");
-			AddAlias("mem", "memusage");
-			AddCommand("garbagecollect", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.GarbageCollect");
-			AddAlias("gc", "garbagecollect");
+			AddCommand("echo", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Echo");
+			AddCommand("gc", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.GarbageCollect");
 		
 			// GameObject stuff
 			AddCommand("listobjects", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ListObjects");
@@ -599,11 +596,15 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			AddCommand("run", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Run");
 			
 			// Physics
-			AddCommand("timescale", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeScale");
-			AddAlias("time", "timescale");
-			AddCommand("gravity", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Gravity");
-			AddAlias("grav", "gravity");
+			AddCommand("physics", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.PhysicsSettings");
+			
+			// Time
+			AddCommand("time", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeSettings");
+			
+			// Where
 			AddCommand("loc", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Loc");
+			
+			// Move
 			AddCommand("move", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Move");
 			AddAlias("mv", "move");
 			AddCommand("move_rb", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MoveRB");

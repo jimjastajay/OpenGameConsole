@@ -54,17 +54,24 @@ public class OGCSettings : EditorWindow
 		if (activeFoldout)
 		{
 			GUILayout.Space(4);
+			int i = 0;
 			foreach (KeyValuePair<string, string> kvp in GameConsole.instance.activeConsoleCommandsEDITOR)
 			{
 				GUILayout.BeginHorizontal();
-				GUILayout.Label(kvp.Key, GUILayout.Width(100));
-				GUILayout.Label(kvp.Value);
+				
+				if (i % 2 == 0)
+					GUI.backgroundColor = Color.gray;
+				else
+					GUI.backgroundColor = Color.white;
+				
+				EditorGUILayout.SelectableLabel(kvp.Key, EditorStyles.textField, GUILayout.Width(100), GUILayout.Height(20));
+				EditorGUILayout.SelectableLabel(kvp.Value, EditorStyles.textField, GUILayout.Height(20), GUILayout.ExpandWidth(true));
 				if (GameConsole.instance.activeAliases.ContainsValue(kvp.Key) ||
 					GameConsole.instance.inactiveAliases.ContainsValue(kvp.Key))
 				{
 					GUI.color = Color.cyan;
 				}
-				if (GUILayout.Button("i", GUILayout.Width(25)))
+				if (GUILayout.Button("i", GUILayout.Width(25), GUILayout.Height(20)))
 				{
 					aliasWindow = true;
 					aliasKey = kvp.Key;
@@ -73,25 +80,26 @@ public class OGCSettings : EditorWindow
 					AssetDatabase.Refresh();
 				}
 				GUI.color = Color.yellow;
-				if (GUILayout.Button("-", GUILayout.Width(25)))
+				if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(20)))
 				{
 					toggleCommand = true;
 					key = kvp.Key;
 				}
 				GUI.color = Color.red;
-				if (GUILayout.Button("x", GUILayout.Width(25)))
+				if (GUILayout.Button("x", GUILayout.Width(25), GUILayout.Height(20)))
 				{
 					removeCommand = true;
 					key = kvp.Key;
 				}
 				GUI.color = Color.white;
 				GUILayout.EndHorizontal();
+				i++;
 			}
-			
+			GUI.backgroundColor = Color.green;
+			GUILayout.Space(4);
 			GUILayout.BeginHorizontal();
-			
-			newKey = GUILayout.TextField(newKey, GUILayout.Width(100));
-			newValue = GUILayout.TextField(newValue);
+			newKey = EditorGUILayout.TextField(newKey, GUILayout.Width(100), GUILayout.Height(20));
+			newValue = EditorGUILayout.TextField(newValue, GUILayout.ExpandWidth(true), GUILayout.Height(20));
 			GUI.color = Color.green;
 			if (GUILayout.Button("Add", GUILayout.Width(84)))
 			{
@@ -99,6 +107,7 @@ public class OGCSettings : EditorWindow
 				newKey = "New Command";
 				newValue = "Method Name";
 			}
+			GUI.backgroundColor = Color.white;
 			GUI.color = Color.white;
 			GUILayout.EndHorizontal();
 		}
@@ -108,17 +117,22 @@ public class OGCSettings : EditorWindow
 		if (inactiveFoldout)
 		{
 			GUILayout.Space(4);
+			int i = 0;
 			foreach (KeyValuePair<string, string> kvp in GameConsole.instance.inactiveConsoleCommandsEDITOR)
 			{
+				if (i % 2 == 0)
+					GUI.backgroundColor = Color.gray;
+				else
+					GUI.backgroundColor = Color.white;
 				GUILayout.BeginHorizontal();
-				GUILayout.Label(kvp.Key, GUILayout.Width(100));
-				GUILayout.Label(kvp.Value);
+				EditorGUILayout.SelectableLabel(kvp.Key, EditorStyles.textField, GUILayout.Width(100), GUILayout.Height(20));
+				EditorGUILayout.SelectableLabel(kvp.Value, EditorStyles.textField, GUILayout.Height(20), GUILayout.ExpandWidth(true));
 				if (GameConsole.instance.activeAliases.ContainsValue(kvp.Key) ||
 					GameConsole.instance.inactiveAliases.ContainsValue(kvp.Key))
 				{
 					GUI.color = Color.cyan;
 				}
-				if (GUILayout.Button("i", GUILayout.Width(25)))
+				if (GUILayout.Button("i", GUILayout.Width(25), GUILayout.Height(20)))
 				{
 					aliasWindow = true;
 					aliasKey = kvp.Key;
@@ -127,22 +141,23 @@ public class OGCSettings : EditorWindow
 					AssetDatabase.Refresh();
 				}
 				GUI.color = Color.green;
-				if (GUILayout.Button("+", GUILayout.Width(25)))
+				if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(20)))
 				{
 					toggleCommand = true;
 					key = kvp.Key;
 				}
 				GUI.color = Color.red;
-				if (GUILayout.Button("x", GUILayout.Width(25)))
+				if (GUILayout.Button("x", GUILayout.Width(25), GUILayout.Height(20)))
 				{
 					removeCommand = true;
 					key = kvp.Key;
 				}
+				i++;
 				GUI.color = Color.white;
 				GUILayout.EndHorizontal();
 			}
 		}
-		
+		GUI.backgroundColor = Color.white;
 		if (toggleCommand)
 		{
 			GameConsole.instance.ToggleCommand(key);
@@ -163,6 +178,7 @@ public class OGCSettings : EditorWindow
 				GameConsole.instance.LoadDefaults();
 				OGCSerialization.SaveData();
 				AssetDatabase.Refresh();
+				Repaint();
 			}
 		}
 		

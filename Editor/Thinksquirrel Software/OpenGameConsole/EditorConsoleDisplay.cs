@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System;
 using ThinksquirrelSoftware.OpenGameConsole;
 using ThinksquirrelSoftware.OpenGameConsole.Utility;
 using System.Collections;
@@ -34,7 +35,7 @@ public class EditorConsoleDisplay : EditorWindow
 		fieldStyle = newSkin.GetStyle("TextField");
 		
 		fieldStyle.font = font;
-		fieldStyle.wordWrap = true;
+		fieldStyle.wordWrap = false;
 		
 		GUI.backgroundColor = bgColor;
 		GUI.contentColor = fgColor;
@@ -76,8 +77,16 @@ public class EditorConsoleDisplay : EditorWindow
 		GUIContent stream = new GUIContent(GameConsole.instance.stream);
 		float height = fieldStyle.CalcHeight(stream, position.width);
 		
+		fieldStyle.wordWrap = true;
 		GUI.SetNextControlName("Console Area");
-		EditorGUILayout.SelectableLabel(GameConsole.instance.stream, fieldStyle, GUILayout.Height(height));
+		if (string.IsNullOrEmpty(GameConsole.instance.stream))
+		{
+			EditorGUILayout.SelectableLabel(" ", fieldStyle, GUILayout.Height(height));
+		}
+		else
+		{
+			EditorGUILayout.SelectableLabel(GameConsole.instance.stream, fieldStyle, GUILayout.Height(height));
+		}
 		
 		
 		GUILayout.BeginHorizontal();
@@ -100,45 +109,29 @@ public class EditorConsoleDisplay : EditorWindow
 			"# > ";
 		
 		
-		fieldStyle.wordWrap = false;
-		
+		fieldStyle.wordWrap = false;	
 		GUIContent sceneText = new GUIContent(scene);
 		Vector2 sceneSize = fieldStyle.CalcSize(sceneText);
-		/*
-		GUILayout.Label(
-			scene +
-			"@" + Application.platform.ToString() +
-			":" + GameConsole.instance.contextString +
-			"# >", fieldStyle, GUILayout.Width(sceneSize.x), GUILayout.Height(sceneSize.y));		
-		*/
 		fieldStyle.wordWrap = true;
 		
 		GUIContent current = new GUIContent(currentText);
 		height = fieldStyle.CalcHeight(current, position.width - sceneSize.x);
 		
 		GUI.SetNextControlName("Current Text");
-		string consoleText = EditorGUILayout.TextField(scene + currentText, fieldStyle, GUILayout.Height(height));
-		Rect r = GUILayoutUtility.GetLastRect();
+		string consoleText = GUILayout.TextField(scene + currentText, fieldStyle, GUILayout.Height(height));
 		
-		if (consoleText.Length < scene.Length || !consoleText.StartsWith(scene))
+		if (!consoleText.StartsWith(scene))
 		{
 			consoleText = scene + currentText;
 			GUI.FocusControl("Console Area");
+			Event.current.Use();
 		}
 		
 		currentText = consoleText.Remove(0, Mathf.Min(consoleText.Length, scene.Length));
 		
 		fieldStyle.wordWrap = false;
-		GUI.SetNextControlName("Cursor");
 		
-		GUIContent cText = new GUIContent(consoleText);
-		Vector2 cTextSize = fieldStyle.CalcSize(cText);
-		
-		if (GUI.GetNameOfFocusedControl() == "Current Text")
-		{
-			GUI.Label(new Rect(r.x + cTextSize.x, r.y, 30, sceneSize.y), "_", fieldStyle);
-		}
-		
+		GUI.contentColor = fgColor;
 		GUI.backgroundColor = bgColor;
 		
 		fieldStyle.font = null;
@@ -151,6 +144,12 @@ public class EditorConsoleDisplay : EditorWindow
 		
 		if (Event.current != null)
 		{	
+			if (Event.current.type == EventType.KeyUp && GUI.GetNameOfFocusedControl() == "Console Area")
+			{
+				consoleText = scene + currentText;
+				currentText = consoleText.Remove(0, Mathf.Min(consoleText.Length, scene.Length));
+				GUI.FocusControl("Current Text");
+			}
 			Repaint();	
 			
 			if (Event.current.keyCode == KeyCode.UpArrow && Event.current.type == EventType.KeyUp)
@@ -192,6 +191,7 @@ public class EditorConsoleDisplay : EditorWindow
 				scrollPosition += Vector2.up * 5000f;
 				currentText = string.Empty;
 				consoleText = scene + currentText;
+				Event.current.Use();
 				GUI.FocusControl("Current Text");
 			}
 		}	
