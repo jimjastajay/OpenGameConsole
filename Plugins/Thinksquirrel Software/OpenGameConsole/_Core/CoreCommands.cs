@@ -517,7 +517,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 				TextWriter helpText = new StringWriter();
 				options.WriteOptionDescriptions(helpText);
 				return
-					"Usage: move [-rlR] GAMEOBJECT VECTOR\n" + 
+					"Usage: move [-rlR] gameobject vector\n" + 
 					"Move an object.\n" +
 					"Options:\n" +
 					helpText.ToString() + "\n" +
@@ -569,27 +569,79 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 #endif
 		}
 		
-		/// <summary>
-		/// Send a message to a Game Object.
-		/// </summary>
 		public static string SendMessage(params string[] args)
-		{	
+		{
 #if SEND_MESSAGE
-			if (args.Length != 2)
+			if (args.Length == 0)
 			{
-				return ConsoleErrors.InvalidArgumentError;
+				return ConsoleErrors.OptionExceptionError("send", "Invalid option(s) or no options specified");
 			}
-				
+
+			bool showHelp = false;
+			bool showVersion = false;
+			bool broadcast = false;
+			bool requireReceiver = false;
+
+			var options = new OptionSet() {
+			{ "b|broadcast", "broadcast the message", o => { if (o != null) { broadcast = true; } } },
+			{ "r|required", "require a receiver for the message.\n an error will be thrown to the Unity log if no receiver is found.", o => { if (o != null) { requireReceiver = true; } } },
+			{ "V|version",  "show version information and exit", o => { showVersion = o != null; } },
+			{ "help",  "show this message and exit", o => { showHelp = o != null; } },};
+
+			GameObject go = null;
+
 			try
 			{
-				GameObject.Find(args[0]).SendMessage(args[1], SendMessageOptions.RequireReceiver);
+				List<string> results = options.Parse(args);
+				if (!(showVersion || showHelp))
+				{
+					go = GameObject.Find(results[0]);
+					if (broadcast)
+					{
+						if (requireReceiver)
+						{
+							go.BroadcastMessage(results[1], SendMessageOptions.RequireReceiver);
+						}
+						else
+						{
+							go.BroadcastMessage(results[1], SendMessageOptions.DontRequireReceiver);
+						}
+					}
+					else
+					{
+						if (requireReceiver)
+						{
+							go.SendMessage(results[1], SendMessageOptions.RequireReceiver);
+						}
+						else
+						{
+							go.SendMessage(results[1], SendMessageOptions.DontRequireReceiver);
+						}						
+					}
+				}
 			}
-			catch
+			catch (Exception e)
 			{
-				return ConsoleErrors.SendMessageError(args[1], args[0]);
+				return ConsoleErrors.OptionExceptionError("send", e.Message);
 			}
-				
-			return "Sent message: " + args[1] + " to " + args[0];
+
+			if (showVersion)
+			{
+				return OGCParse.ExpatLicense("OpenGameConsole Send Message", "1.0", "2011", "Thinksquirrel Software, LLC");
+			}
+			if (showHelp)
+			{
+				TextWriter helpText = new StringWriter();
+				options.WriteOptionDescriptions(helpText);
+				return
+					"Usage: send [-br] gameobject message\n" + 
+					"Send a message to an object.\n" +
+					"Options:\n" +
+					helpText.ToString() + "\n" +
+					"Report bugs to: support@thinksquirrel.com";
+			}
+
+			return string.Empty;
 #else
 			return ConsoleErrors.CommandExecutionError;
 #endif
@@ -601,28 +653,65 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		public static string Loc(params string[] args)
 		{	
 #if LOC
-			if (args.Length != 2)
+			if (args.Length == 0)
 			{
-				return ConsoleErrors.InvalidArgumentError;
+				return ConsoleErrors.OptionExceptionError("loc", "Invalid option(s) or no options specified");
 			}
+
+			bool showHelp = false;
+			bool showVersion = false;
+			bool physics = false;
+
+			var options = new OptionSet() {
+			{ "p|physics", "list physics information, if available", o => { if (o != null) { physics = true; } } },
+			{ "V|version",  "show version information and exit", o => { showVersion = o != null; } },
+			{ "help",  "show this message and exit", o => { showHelp = o != null; } },};
 			
-			Vector3 position = Vector3.zero;
+			GameObject go = null;
 			
 			try
 			{
-				position = GameObject.Find(args[0]).transform.position;
+				List<string> results = options.Parse(args);
+				if (results.Count > 0)
+				{
+					go = GameObject.Find(results[0]);
+				}
 			}
-			catch
+			catch (Exception e)
 			{
-				return ConsoleErrors.GameObjectNotFoundError(args[0]);
+				return ConsoleErrors.OptionExceptionError("send", e.Message);
 			}
 			
-			return args[0] + " is located at " + 
-					"X: " + position.x +
-					" | Y: " + position.y +
-					" | Z: " + position.z;
-#else
+			if (showVersion)
+			{
+				return OGCParse.ExpatLicense("OpenGameConsole Location", "1.0", "2011", "Thinksquirrel Software, LLC");
+			}
+			if (showHelp)
+			{
+				TextWriter helpText = new StringWriter();
+				options.WriteOptionDescriptions(helpText);
+				return
+					"Usage: send [-br] gameobject message\n" + 
+					"Send a message to an object.\n" +
+					"Options:\n" +
+					helpText.ToString() + "\n" +
+					"Report bugs to: support@thinksquirrel.com";
+			}
+			
+			GameConsole.instance.Echo(go.name + "(Transform):\n" + "Position - " + go.transform.position + " | Rotation - " + go.transform.rotation, false);
+			if (physics && go.rigidbody)
+			{
+				GameConsole.instance.Echo(
+				go.name + "(Rigidbody):\n" +
+				"Position - " + go.rigidbody.position + " | Rotation - " + go.rigidbody.rotation + "\n" +
+				"Velocity - " + go.rigidbody.velocity + " | Angular Velocity - " + go.rigidbody.angularVelocity,
+				false
+				);
+			}
+
 			return string.Empty;
+#else
+			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
 

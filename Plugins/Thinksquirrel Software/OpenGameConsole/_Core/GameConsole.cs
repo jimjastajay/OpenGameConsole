@@ -586,8 +586,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			AddAlias("list", "listobjects");
 			AddAlias("ls", "listobjects");
 			AddAlias("li", "listobjects");
-			AddCommand("sendmessage", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage");
-			AddAlias("send", "sendmessage");
+			AddCommand("send", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage");
 			
 			// Get and Run
 			AddCommand("get", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Get");

@@ -6,7 +6,6 @@
     <string>list</string>
     <string>ls</string>
     <string>li</string>
-    <string>send</string>
     <string>download</string>
     <string>dl</string>
   </Keys>
@@ -16,7 +15,6 @@
     <string>listobjects</string>
     <string>listobjects</string>
     <string>listobjects</string>
-    <string>sendmessage</string>
     <string>get</string>
     <string>get</string>
   </Values>

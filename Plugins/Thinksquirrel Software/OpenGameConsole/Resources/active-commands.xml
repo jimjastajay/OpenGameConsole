@@ -8,7 +8,7 @@
     <string>echo</string>
     <string>gc</string>
     <string>listobjects</string>
-    <string>sendmessage</string>
+    <string>send</string>
     <string>get</string>
     <string>run</string>
     <string>physics</string>

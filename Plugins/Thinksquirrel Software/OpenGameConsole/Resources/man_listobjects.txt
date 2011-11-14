@@ -1,1 +1,0 @@
-0 arguments: Lists the current scene hierarchy, based on context.

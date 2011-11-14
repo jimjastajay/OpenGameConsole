@@ -1,1 +1,0 @@
-1 argument (URI): Downloads the specified resource and runs it as a script.
