@@ -9,8 +9,6 @@
     <string>send</string>
     <string>download</string>
     <string>dl</string>
-    <string>mv</string>
-    <string>mv_rb</string>
   </Keys>
   <Values>
     <string>clear</string>
@@ -21,7 +19,5 @@
     <string>sendmessage</string>
     <string>get</string>
     <string>get</string>
-    <string>move</string>
-    <string>move_rb</string>
   </Values>
 </DictionaryWrapper>

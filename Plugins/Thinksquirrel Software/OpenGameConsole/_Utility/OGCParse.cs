@@ -142,39 +142,5 @@ namespace ThinksquirrelSoftware.OpenGameConsole.Utility
 		{
 			return new Vector3(System.Convert.ToSingle(xString), System.Convert.ToSingle(yString), System.Convert.ToSingle(zString));
 		}
-		
-		public static Vector3 ParseVector3(string xString, string yString, string zString, Vector3 currentVector)
-		{
-			float x = 0;
-			float y = 0;
-			float z = 0;
-			
-			if (xString == "x")
-			{
-				x = currentVector.x;
-			}
-			else
-			{
-				x = System.Convert.ToSingle(xString);
-			}
-			if (yString == "y")
-			{
-				y = currentVector.y;
-			}
-			else
-			{
-				y = System.Convert.ToSingle(yString);
-			}
-			if (zString == "z")
-			{
-				z = currentVector.z;
-			}
-			else
-			{
-				z = System.Convert.ToSingle(zString);
-			}
-			
-			return new Vector3(x, y, z);
-		}
 	}
 }

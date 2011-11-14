@@ -601,17 +601,11 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			// Time
 			AddCommand("time", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeSettings");
 			
-			// Where
+			// Loc
 			AddCommand("loc", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Loc");
 			
 			// Move
-			AddCommand("move", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Move");
-			AddAlias("mv", "move");
-			AddCommand("move_rb", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.MoveRB");
-			AddAlias("mv_rb", "move_rb");
-			
-			// Random
-			AddCommand("nyan", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.NyanCat");
+			AddCommand("mv", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Move");
 		}
 #endif
 		

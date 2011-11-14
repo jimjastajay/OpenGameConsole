@@ -11,9 +11,9 @@ public class EditorConsoleDisplay : EditorWindow
 	private Vector2 scrollPosition;
 	private string currentText = "";
 	private int commandPointer = - 1;
-	private Color bgColor = Color.black;
-	private Color fgColor = Color.white;
-	private Font font;
+	private static Color bgColor = Color.black;
+	private static Color fgColor = Color.white;
+	private static Font font;
 	private GUISkin newSkin;
 	private GUIStyle fieldStyle;
 	
@@ -26,6 +26,7 @@ public class EditorConsoleDisplay : EditorWindow
 	void OnEnable()
 	{
 		font = EditorGUIUtility.Load("Thinksquirrel Software/OpenGameConsole/Font/ConsolaMono.ttf") as Font;
+		LoadEditorPrefs();
 	}
 	
 	void OnGUI()
@@ -64,13 +65,21 @@ public class EditorConsoleDisplay : EditorWindow
 		GUILayout.Label("Foreground ", EditorStyles.toolbarButton);
 		fgColor = EditorGUILayout.ColorField(fgColor, GUILayout.Width(40));
 		font = EditorGUILayout.ObjectField(font, typeof(Font), false) as Font;
+		if (GUILayout.Button("Save Prefs", EditorStyles.toolbarButton))
+		{
+			SaveEditorPrefs();
+		}
+		if (GUILayout.Button("Revert", EditorStyles.toolbarButton))
+		{
+			LoadEditorPrefs();
+		}
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
 		GUILayout.EndVertical();
 		
 		
 		scrollPosition = EditorGUILayout.BeginScrollView(
-        scrollPosition, GUILayout.Width(position.width), GUILayout.Height(position.height - 20));
+        scrollPosition, GUILayout.Width(position.width), GUILayout.Height(position.height - 16));
 		
 		GUI.backgroundColor = Color.clear;
 		
@@ -88,7 +97,7 @@ public class EditorConsoleDisplay : EditorWindow
 			EditorGUILayout.SelectableLabel(GameConsole.instance.stream, fieldStyle, GUILayout.Height(height));
 		}
 		
-		
+		GUILayout.Space(20);
 		GUILayout.BeginHorizontal();
 		
 		string[] path = EditorApplication.currentScene.Split('/');
@@ -119,6 +128,7 @@ public class EditorConsoleDisplay : EditorWindow
 		
 		GUI.SetNextControlName("Current Text");
 		string consoleText = GUILayout.TextField(scene + currentText, fieldStyle, GUILayout.Height(height));
+		Rect consoleTextRect = GUILayoutUtility.GetLastRect();
 		
 		if (!consoleText.StartsWith(scene))
 		{
@@ -128,6 +138,38 @@ public class EditorConsoleDisplay : EditorWindow
 		}
 		
 		currentText = consoleText.Remove(0, Mathf.Min(consoleText.Length, scene.Length));
+		
+		if (GUI.GetNameOfFocusedControl() == "Current Text")
+		{
+			GUI.color = new Color(1,1,1,.75f);
+			GUI.backgroundColor = Color.white;
+			GUI.contentColor = Color.white;
+			GUI.depth = 100;
+			if (string.IsNullOrEmpty(currentText)) GUI.enabled = false;
+			if (GUI.Button(new Rect(consoleTextRect.x, consoleTextRect.y - 20, 60, 20),"Cut"))
+			{
+				EditorGUIUtility.systemCopyBuffer = currentText;
+				currentText = "";
+			}
+			if (GUI.Button(new Rect(consoleTextRect.x + 60, consoleTextRect.y - 20, 60, 20),"Copy"))
+			{
+				EditorGUIUtility.systemCopyBuffer = currentText;
+			}
+			if (GUI.Button(new Rect(consoleTextRect.x + 180, consoleTextRect.y - 20, 60, 20),"Clear"))
+			{
+				currentText = "";
+			}
+			GUI.enabled = true;
+			if (string.IsNullOrEmpty(EditorGUIUtility.systemCopyBuffer)) GUI.enabled = false;
+			if (GUI.Button(new Rect(consoleTextRect.x + 120, consoleTextRect.y - 20, 60, 20),"Paste"))
+			{
+				currentText = EditorGUIUtility.systemCopyBuffer;
+			}
+			GUI.enabled = true;
+			GUI.contentColor = fgColor;
+			GUI.backgroundColor = bgColor;
+			GUI.color = Color.white;
+		}
 		
 		fieldStyle.wordWrap = false;
 		
@@ -150,6 +192,7 @@ public class EditorConsoleDisplay : EditorWindow
 				currentText = consoleText.Remove(0, Mathf.Min(consoleText.Length, scene.Length));
 				GUI.FocusControl("Current Text");
 			}
+		
 			Repaint();	
 			
 			if (Event.current.keyCode == KeyCode.UpArrow && Event.current.type == EventType.KeyUp)
@@ -194,6 +237,44 @@ public class EditorConsoleDisplay : EditorWindow
 				Event.current.Use();
 				GUI.FocusControl("Current Text");
 			}
-		}	
+		}
+
+	}
+	
+	public static void SaveEditorPrefs()
+	{
+		PlayerPrefs.SetFloat("OGC_Editor_bgColor_R", EditorConsoleDisplay.bgColor.r);
+		PlayerPrefs.SetFloat("OGC_Editor_bgColor_G", EditorConsoleDisplay.bgColor.g);
+		PlayerPrefs.SetFloat("OGC_Editor_bgColor_B", EditorConsoleDisplay.bgColor.b);
+		PlayerPrefs.SetFloat("OGC_Editor_bgColor_A", EditorConsoleDisplay.bgColor.a);
+
+		PlayerPrefs.SetFloat("OGC_Editor_fgColor_R", EditorConsoleDisplay.fgColor.r);
+		PlayerPrefs.SetFloat("OGC_Editor_fgColor_G", EditorConsoleDisplay.fgColor.g);
+		PlayerPrefs.SetFloat("OGC_Editor_fgColor_B", EditorConsoleDisplay.fgColor.b);
+		PlayerPrefs.SetFloat("OGC_Editor_fgColor_A", EditorConsoleDisplay.fgColor.a);
+
+		PlayerPrefs.SetInt("OGC_Editor_savedPrefs", 1);
+	}
+
+	public static void LoadEditorPrefs()
+	{
+		if (!PlayerPrefs.HasKey("OGC_savedPrefs"))
+		{
+			SaveEditorPrefs();
+		}
+
+		EditorConsoleDisplay.bgColor = new Color(
+			PlayerPrefs.GetFloat("OGC_Editor_bgColor_R"),
+			PlayerPrefs.GetFloat("OGC_Editor_bgColor_G"),
+			PlayerPrefs.GetFloat("OGC_Editor_bgColor_B"),
+			PlayerPrefs.GetFloat("OGC_Editor_bgColor_A")
+			);
+
+		EditorConsoleDisplay.fgColor = new Color(
+			PlayerPrefs.GetFloat("OGC_Editor_fgColor_R"),
+			PlayerPrefs.GetFloat("OGC_Editor_fgColor_G"),
+			PlayerPrefs.GetFloat("OGC_Editor_fgColor_B"),
+			PlayerPrefs.GetFloat("OGC_Editor_fgColor_A")
+			);
 	}
 }

@@ -1,5 +1,4 @@
 /// These defines control compilation of each command - it is recommended to undefine any commands that are not enabled.
-#define NYAN_CAT
 #define VERSION
 #define CLEAR
 #define CONSOLE_SETTINGS
@@ -9,7 +8,6 @@
 #define PHYSICS
 #define TIME
 #define MOVE
-#define MOVE_RB
 #define SEND_MESSAGE
 #define LOC
 #define ECHO
@@ -28,85 +26,34 @@ using System.Text.RegularExpressions;
 namespace ThinksquirrelSoftware.OpenGameConsole
 {
 	public static class CoreCommands
-	{
-#if NYAN_CAT
-		private static AudioSource PlayNyan(AudioClip clip, Vector3 position)
-		{
-			GameObject go = null;
-			if (GameObject.Find("nyan.lock"))
-			{
-				go = GameObject.Find("nyan.lock");
-			}
-			else
-			{
-				go = new GameObject("nyan.lock");
-			}
-			go.transform.position = position;
-			AudioSource source = go.AddComponent<AudioSource>();
-			source.clip = clip;
-			source.loop = true;
-			source.volume = 1;
-			source.Play();
-			return source;
-		}
-		
-		private static AudioSource nyan;
-#endif
-		
-		/// <summary>
-		/// Nyans the cat.
-		/// </summary>
-		/// <returns>
-		/// The cat.
-		/// </returns>
-		/// <param name='args'>
-		/// What is this I don't even.
-		/// </param>
-		public static string NyanCat(params string[] args)
-		{
-#if NYAN_CAT
-			if (nyan)
-			{
-				if (nyan.isPlaying)
-				{
-					nyan.Stop();
-					UnityEngine.Object.DestroyImmediate(nyan.gameObject);
-					return "Awww...";
-				}
-				else
-				{
-					UnityEngine.Object.DestroyImmediate(nyan);
-					nyan = PlayNyan(Resources.Load("nyan") as AudioClip, Vector3.zero);
-					return 
-					"Yes son. Now we are a family again.\n" +
-					",*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`\n" +
-					".,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,\n" +
-					"*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^         ,---/V\\\n" +
-					"`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.    ~|__(o.o)\n" +
-					"^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'  UU  UU";
-				}
-			}
-			else
-			{
-				nyan = PlayNyan(Resources.Load("nyan") as AudioClip, Vector3.zero);
-				return 
-				"Yes son. Now we are a family again.\n" +
-				",*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`\n" +
-				".,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,\n" +
-				"*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^         ,---/V\\\n" +
-				"`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.    ~|__(o.o)\n" +
-				"^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'  UU  UU";
-			}
-#else
-			return ConsoleErrors.CommandExecutionError;
-#endif
-		}
-		
+	{	
 		public static string Version(params string[] args)
 		{
 #if VERSION
-			return OGCParse.ExpatLicense("OpenGameConsole", "1.0 | Environment: Unity Engine v. " + Application.unityVersion + " | Language: " + 
-				Application.systemLanguage.ToString(), "2011", "Thinksquirrel Software, LLC");
+			return OGCParse.ExpatLicense("OpenGameConsole", "1.0 | Environment: Unity 3D Engine v. " + Application.unityVersion + " | Language: " + 
+				Application.systemLanguage.ToString(), "2011", "Thinksquirrel Software, LLC") + "\n" +
+				"----------------------\n"+
+				"NDesk.Options License\n" +
+				"Copyright (C) 2008 Novell (http://www.novell.com)\n" +
+				"\n" +
+				"Permission is hereby granted, free of charge, to any person obtaining\n" +
+				"a copy of this software and associated documentation files (the\n" +
+				"\"Software\"), to deal in the Software without restriction, including\n" +
+				"without limitation the rights to use, copy, modify, merge, publish,\n" +
+				"distribute, sublicense, and/or sell copies of the Software, and to\n" +
+				"permit persons to whom the Software is furnished to do so, subject to\n" +
+				"the following conditions:\n" +
+				"\n" +
+				"The above copyright notice and this permission notice shall be\n" +
+				"included in all copies or substantial portions of the Software.\n" +
+				"\n" +
+				"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\n" +
+				"EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n" +
+				"MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND\n" +
+				"NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE\n" +
+				"LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\n" +
+				"OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION\n" +
+				"WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
 #else
 			return ConsoleErrors.CommandExecutionError;
 #endif
@@ -526,75 +473,101 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		public static string Move(params string[] args)
 		{
 #if MOVE
-			if (args.Length != 4)
+			if (args.Length == 0)
 			{
-				return ConsoleErrors.InvalidArgumentError;
+				return ConsoleErrors.OptionExceptionError("mv", "Invalid option(s) or no options specified");
 			}
-			
-			Vector3 a = Vector3.zero;
+
+			bool showHelp = false;
+			bool showVersion = false;
+			bool moveRigidbody = false;
+			bool moveLocal = false;
+			bool moveRelative = false;
+
+			var options = new OptionSet() {
+			{ "r|rigidbody", "move a rigidbody instead of a transform", o => { if (o != null) { moveRigidbody = true; } } },
+            { "l|local", "move in local space", o => { if (o != null) { moveLocal = true; } } },
+			{ "R|relative", "move by a relative vector", o => { if (o != null) { moveRelative = true; } } },
+			{ "V|version",  "show version information and exit", o => { showVersion = o != null; } },
+			{ "help",  "show this message and exit", o => { showHelp = o != null; } },};
+
+			GameObject go = null;
+			Vector3 vector = Vector3.zero;
 			
 			try
 			{
-				a = OGCParse.ParseVector3(args[1], args[2], args[3], GameObject.Find(args[0]).transform.position);
+				List<string> results = options.Parse(args);
+				if (!(showVersion || showHelp))
+				{
+					go = GameObject.Find(results[0]);
+					vector = OGCParse.ParseVector3(results[1],results[2],results[3]);
+				}
 			}
-			catch
+			catch (Exception e)
 			{
-				return ConsoleErrors.VectorParsingError;
+				return ConsoleErrors.OptionExceptionError("mv", e.Message);
 			}
+
+			if (showVersion)
+			{
+				return OGCParse.ExpatLicense("OpenGameConsole Move", "1.0", "2011", "Thinksquirrel Software, LLC");
+			}
+			if (showHelp)
+			{
+				TextWriter helpText = new StringWriter();
+				options.WriteOptionDescriptions(helpText);
+				return
+					"Usage: move [-rlR] GAMEOBJECT VECTOR\n" + 
+					"Move an object.\n" +
+					"Options:\n" +
+					helpText.ToString() + "\n" +
+					"Report bugs to: support@thinksquirrel.com";
+			}
+			
+			Vector3 rVector = Vector3.zero;
+			
 			try
 			{
-				GameObject.Find(args[0]).transform.position = a;
+				if (moveRigidbody)
+				{
+					if (moveLocal)
+					{
+						if (moveRelative) rVector = go.rigidbody.position;
+						go.rigidbody.velocity = Vector3.zero;
+						go.rigidbody.MovePosition(rVector + go.transform.TransformPoint(vector));
+					}
+					else
+					{
+						if (moveRelative) rVector = go.rigidbody.position;
+						
+						go.rigidbody.MovePosition(rVector + vector);
+					}
+				}
+				else
+				{
+					if (moveLocal)
+					{
+						if (moveRelative) rVector = go.transform.localPosition;
+						
+						go.transform.localPosition = rVector + vector;						
+					}
+					else
+					{
+						if (moveRelative) rVector = go.transform.position;
+						
+						go.transform.position = rVector + vector;						
+					}
+				}
 			}
-			catch
+			catch (Exception e)
 			{
-				return ConsoleErrors.GameObjectNotFoundError(args[0]);
+				return ConsoleErrors.OptionExceptionError("mv", e.Message);
 			}
-				
-			return "Moved GameObject: " + args[0] + " to " + 
-					"X: " + a.x +
-					" | Y: " + a.y +
-					" | Z: " + a.z;
+			return string.Empty;
 #else
 			return ConsoleErrors.CommandExecutionError;
 #endif
 		}
-		
-		public static string MoveRB(params string[] args)
-		{	
-#if MOVE_RB
-			if (args.Length != 4)
-			{
-				return ConsoleErrors.InvalidArgumentError;
-			}
-			
-			Vector3 a = Vector3.zero;
-			
-			try
-			{
-				a = OGCParse.ParseVector3(args[1], args[2], args[3], GameObject.Find(args[0]).rigidbody.position);
-			}
-			catch
-			{
-				return ConsoleErrors.VectorParsingError;
-			}
-			try
-			{
-				GameObject.Find(args[0]).rigidbody.position = a;
-			}
-			catch
-			{
-				return ConsoleErrors.GameObjectNotFoundError(args[0]);
-			}
-				
-			return "Moved Rigidbody: " + args[0] + " to " + 
-					"X: " + a.x +
-					" | Y: " + a.y +
-					" | Z: " + a.z;
-#else
-			return ConsoleErrors.CommandExecutionError;
-#endif
-		}
-		
 		
 		/// <summary>
 		/// Send a message to a Game Object.
