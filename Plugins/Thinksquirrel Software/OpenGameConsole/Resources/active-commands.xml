@@ -9,8 +9,9 @@
     <string>gc</string>
     <string>listobjects</string>
     <string>send</string>
+    <string>edit</string>
     <string>get</string>
-    <string>run</string>
+    <string>get2</string>
     <string>physics</string>
     <string>time</string>
     <string>loc</string>
@@ -25,8 +26,9 @@
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.GarbageCollect</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.ListObjects</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage</string>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Edit</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Get</string>
-    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Run</string>
+    <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Get2</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.PhysicsSettings</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.TimeSettings</string>
     <string>ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Loc</string>

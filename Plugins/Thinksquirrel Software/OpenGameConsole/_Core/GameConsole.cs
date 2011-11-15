@@ -587,12 +587,13 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			AddAlias("ls", "listobjects");
 			AddAlias("li", "listobjects");
 			AddCommand("send", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.SendMessage");
+			AddCommand("edit", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Edit");
 			
 			// Get and Run
 			AddCommand("get", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Get");
 			AddAlias("download", "get");
 			AddAlias("dl", "get");
-			AddCommand("run", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Run");
+			AddCommand("get2", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.Get2");
 			
 			// Physics
 			AddCommand("physics", "ThinksquirrelSoftware.OpenGameConsole.CoreCommands.PhysicsSettings");

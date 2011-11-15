@@ -11,13 +11,15 @@
 #define SEND_MESSAGE
 #define LOC
 #define ECHO
+#define EDIT
 #define GET
-#define RUN
+#define GET2
 using UnityEngine;
 using ThinksquirrelSoftware.OpenGameConsole;
 using ThinksquirrelSoftware.OpenGameConsole.Utility;
 using NDesk.Options;
 using System;
+using System.Reflection;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,30 +32,69 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		public static string Version(params string[] args)
 		{
 #if VERSION
-			return OGCParse.ExpatLicense("OpenGameConsole", "1.0 | Environment: Unity 3D Engine v. " + Application.unityVersion + " | Language: " + 
-				Application.systemLanguage.ToString(), "2011", "Thinksquirrel Software, LLC") + "\n" +
-				"----------------------\n"+
-				"NDesk.Options License\n" +
-				"Copyright (C) 2008 Novell (http://www.novell.com)\n" +
-				"\n" +
-				"Permission is hereby granted, free of charge, to any person obtaining\n" +
-				"a copy of this software and associated documentation files (the\n" +
-				"\"Software\"), to deal in the Software without restriction, including\n" +
-				"without limitation the rights to use, copy, modify, merge, publish,\n" +
-				"distribute, sublicense, and/or sell copies of the Software, and to\n" +
-				"permit persons to whom the Software is furnished to do so, subject to\n" +
-				"the following conditions:\n" +
-				"\n" +
-				"The above copyright notice and this permission notice shall be\n" +
-				"included in all copies or substantial portions of the Software.\n" +
-				"\n" +
-				"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\n" +
-				"EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n" +
-				"MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND\n" +
-				"NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE\n" +
-				"LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\n" +
-				"OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION\n" +
-				"WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+			bool showHelp = false;
+			bool showLicense = false;		
+
+			var options = new OptionSet()
+			{
+				{ "l|license", "show license information", o => { showLicense = o != null; } },
+				{ "help",  "show this message and exit", o => { showHelp = o != null; } },
+			};
+
+			try
+			{
+				options.Parse(args);
+			}
+			catch (OptionException e)
+			{
+				return ConsoleErrors.OptionExceptionError("version", e.Message);
+			}
+
+			if (showHelp)
+			{
+				TextWriter helpText = new StringWriter();
+				options.WriteOptionDescriptions(helpText);
+				return
+					"Usage: version [-l]\n" + 
+					"Change the console settings.\n" +
+					"Options:\n" +
+					helpText.ToString() + "\n" +
+					"Report bugs to: support@thinksquirrel.com";
+			}
+			if (showLicense)
+			{
+				return OGCParse.ExpatLicense("OpenGameConsole", "1.0 | Environment: Unity 3D Engine v. " + Application.unityVersion + " | Language: " + 
+					Application.systemLanguage.ToString(), "2011", "Thinksquirrel Software, LLC") + "\n" +
+					"----------------------\n"+
+					"NDesk.Options License\n" +
+					"Copyright (C) 2008 Novell (http://www.novell.com)\n" +
+					"\n" +
+					"Permission is hereby granted, free of charge, to any person obtaining\n" +
+					"a copy of this software and associated documentation files (the\n" +
+					"\"Software\"), to deal in the Software without restriction, including\n" +
+					"without limitation the rights to use, copy, modify, merge, publish,\n" +
+					"distribute, sublicense, and/or sell copies of the Software, and to\n" +
+					"permit persons to whom the Software is furnished to do so, subject to\n" +
+					"the following conditions:\n" +
+					"\n" +
+					"The above copyright notice and this permission notice shall be\n" +
+					"included in all copies or substantial portions of the Software.\n" +
+					"\n" +
+					"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\n" +
+					"EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n" +
+					"MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND\n" +
+					"NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE\n" +
+					"LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION\n" +
+					"OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION\n" +
+					"WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+			}
+			else
+			{
+				return "OpenGameConsole Version 1.0 | Environment: Unity 3D Engine v. " + 
+					Application.unityVersion + " | Language: " + 
+					Application.systemLanguage.ToString() + "\n" +
+					"Type `version -l' for license information.";
+			}
 #else
 			return ConsoleErrors.CommandExecutionError;
 #endif
@@ -62,7 +103,42 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		public static string Clear(params string[] args)
 		{
 #if CLEAR
+			bool showHelp = false;
+			bool showVersion = false;		
+
+			var options = new OptionSet()
+			{
+				{ "V|version", "show version information", o => { showVersion = o != null; } },
+				{ "help",  "show this message and exit", o => { showHelp = o != null; } },
+			};
+
+			try
+			{
+				options.Parse(args);
+			}
+			catch (OptionException e)
+			{
+				return ConsoleErrors.OptionExceptionError("clear", e.Message);
+			}
+
+			if (showVersion)
+			{
+				return OGCParse.ExpatLicense("OpenGameConsole Clear", "1.0", "2011", "Thinksquirrel Software, LLC");
+			}
+			if (showHelp)
+			{
+				TextWriter helpText = new StringWriter();
+				options.WriteOptionDescriptions(helpText);
+				return
+					"Usage: clear\n" + 
+					"Clear the console stream.\n" +
+					"Options:\n" +
+					helpText.ToString() + "\n" +
+					"Report bugs to: support@thinksquirrel.com";
+			}
+
 			GameConsole.instance.ClearStream();
+
 			return string.Empty;
 #else
 			return ConsoleErrors.CommandExecutionError;
@@ -172,7 +248,7 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			try
 			{
 				if (args[0].Replace(" ", "") == "#")
-					return "Help<#>\n\nDoes nothing - used as a comment.";
+					return "#:\n\nDoes nothing - used as a comment.";
 				
 				string cmd = args[0].Replace(" ", "");
 				if (GameConsole.instance.activeAliases.ContainsKey(cmd))
@@ -180,7 +256,12 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 					cmd = GameConsole.instance.activeAliases[cmd];
 				}
 				TextAsset helpFile = Resources.Load("man_" + cmd) as TextAsset;
-				return "Help<" + args[0].Replace(" ", "") + ">\n\n" + helpFile.text;
+				GameConsole.instance.Input(cmd + " --help");
+				if (!string.IsNullOrEmpty(helpFile.text))
+				{
+					GameConsole.instance.Echo("Additional Information:,", false);
+				}
+				return helpFile.text;
 			}
 			catch
 			{
@@ -203,27 +284,50 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			{
 				try
 				{
-					string objects = "\n";
+					string objects = "";
 					
 					if (GameConsole.instance.target == null)
 					{
 						GameObject[] objs = UnityEngine.Object.FindObjectsOfType(typeof(GameObject)) as GameObject[];
+						
+						int col = 0;
 						foreach (GameObject obj in objs)
 						{
 							if (obj.transform.parent == null)
 							{
-								objects += obj.name + "\n";
+								objects += String.Format("{0,-30}", obj.name);
+							}
+							if (++col > 2)
+							{
+								col = 0;
+								objects += "\n";
 							}
 						}
 					}
 					else
 					{
+						int col = 0;
 						foreach (Transform t in GameConsole.instance.target.transform)
 						{
 							if (t == GameConsole.instance.target.transform)
 								continue;
+							objects += String.Format("{0,-30}", t.gameObject.name);
 							
-							objects += t.gameObject.name + "\n";
+							if (++col > 2)
+							{
+								col = 0;
+								objects += "\n";
+							}
+						}
+						foreach (Component c in GameConsole.instance.target.GetComponents<Component>())
+						{
+							objects += String.Format("{0,-30}", c.GetType().Name);
+							
+							if (++col > 2)
+							{
+								col = 0;
+								objects += "\n";
+							}
 						}
 					}
 					return objects;
@@ -772,6 +876,196 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 			ConsoleErrors.CommandExecutionError;
 #endif
 		}
+		
+		public static string Edit(params string[] args)
+		{
+#if EDIT
+			if (args.Length == 0)
+			{
+				return ConsoleErrors.OptionExceptionError("edit", "Invalid option(s) or no arguments specified");
+			}
+
+			bool showHelp = false;
+			bool showVersion = false;
+			bool showList = false;
+			
+		 	string field = null;
+			string property = null;
+			string value = null;
+
+			var options = new OptionSet()
+			{
+				{ "l|list", "list fields, properties, and methods", o => { showList = o != null; } },
+				{ "f|field=", "specify a field to edit", (string o) => { if (o != null) field = o; } },
+				{ "p|property=", "specify a property to edit", (string o) => { if (o != null) property = o; } },
+				{ "v|value=", "the value to assign the field/property", (string o) => { if (o != null) value = o; } },
+				{ "V|version",  "show version information and exit", o => { showVersion = o != null; } },
+				{ "help",  "show this message and exit", o => { showHelp = o != null; } },
+			};
+
+			List<string> results = new List<string>();
+			Type type = null;
+			FieldInfo[] fields = null;
+			PropertyInfo[] properties = null;
+			
+			try
+			{
+				if (GameConsole.instance.target == null)
+				{
+					throw new Exception("No current game object");
+				}
+				results = options.Parse(args);
+				foreach(string c in results)
+				{
+					type = Type.GetType(c);
+					
+					if (type == null)
+					{
+						// Fix for UnityEngine types
+						type = System.Reflection.Assembly.GetAssembly(typeof(GameObject)).GetType("UnityEngine." + c);
+					}
+					fields = type.GetFields();
+					properties = type.GetProperties();
+				}
+				if (field != null && fields != null)
+				{
+					if (fields.Length > 0)
+					{
+						foreach(FieldInfo f in fields)
+						{
+							if (f.Name == field)
+							{
+								if (value == null)
+								{
+									GameConsole.instance.Echo(f.Name + ":\n" + f.GetValue(GameConsole.instance.target.GetComponent(type)), false);
+								}
+								else
+								{
+									try
+									{
+										f.SetValue(GameConsole.instance.target.GetComponent(type), Convert.ChangeType(value, f.FieldType));
+									}
+									catch
+									{
+										string[] vector = value.Split(' ');
+										f.SetValue(GameConsole.instance.target.GetComponent(type), OGCParse.ParseVector3(vector[0], vector[1], vector[2]));
+									}
+								}
+							}
+						}
+					}
+				}
+				if (property != null && properties != null)
+				{
+					if (properties.Length > 0)
+					{
+						foreach(PropertyInfo p in properties)
+						{
+							if (p.Name == property)
+							{
+								if (value == null)
+								{
+									string rO = " (read-only)";
+									if (p.CanWrite) rO = "";
+									GameConsole.instance.Echo(p.Name + rO + ":\n" + p.GetValue(GameConsole.instance.target.GetComponent(type), null), false);
+								}
+								else
+								{
+									try
+									{
+										p.SetValue(GameConsole.instance.target.GetComponent(type), Convert.ChangeType(value, p.PropertyType), null);
+									}
+									catch
+									{
+										string[] vector = value.Split(' ');
+										p.SetValue(GameConsole.instance.target.GetComponent(type), OGCParse.ParseVector3(vector[0], vector[1], vector[2]), null);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				return ConsoleErrors.OptionExceptionError("edit", e.Message);
+			}
+
+			if (showVersion)
+			{
+				return OGCParse.ExpatLicense("OpenGameConsole Edit", "1.0", "2011", "Thinksquirrel Software, LLC");
+			}
+			if (showHelp)
+			{
+				TextWriter helpText = new StringWriter();
+				options.WriteOptionDescriptions(helpText);
+				return
+					"Usage: edit component1 [component2 component3...] [-l] [f=] [p=] [v=]\n" + 
+					"Edit fields and properties on components.\n" +
+					"Options:\n" +
+					helpText.ToString() + "\n" +
+					"Report bugs to: support@thinksquirrel.com";
+			}
+			if (showList)
+			{
+				string message = "";
+				
+				if (fields != null)
+				{
+					if (fields.Length > 0)
+						message += "Fields:\n\n";
+					
+					int col = 0;
+						
+					foreach(FieldInfo f in fields)
+					{
+						if (f.FieldType.IsSubclassOf(typeof(UnityEngine.Object)) || f.FieldType == typeof(UnityEngine.Matrix4x4))
+						{
+							continue;
+						}
+						message += String.Format("{0,-60}", f.Name + "=" + f.GetValue(GameConsole.instance.target.GetComponent(type)));
+						if (++col > 1)
+						{
+							col = 0;
+							message += "\n";
+						}
+					}
+					message += "\n";
+				}
+				if (properties != null)
+				{
+					if (properties.Length > 0)
+						message += "Properties:\n\n";
+					
+					int col = 0;
+						
+					foreach(PropertyInfo p in properties)
+					{
+						string rO = " (read-only)";
+						if (p.CanWrite)
+						{
+							rO = "";
+						}
+						if (p.PropertyType.IsSubclassOf(typeof(UnityEngine.Object)) || p.PropertyType == typeof(UnityEngine.Matrix4x4))
+						{
+							continue;
+						}
+						message += String.Format("{0,-60}", p.Name + "=" + p.GetValue(GameConsole.instance.target.GetComponent(type), null) + rO);
+						if (++col > 1)
+						{
+							col = 0;
+							message += "\n";
+						}
+					}
+				}
+				return message;
+			}
+
+			return string.Empty;
+#else
+			ConsoleErrors.CommandExecutionError;
+#endif
+		}
 				
 		/// <summary>
 		/// Get a file and print it.
@@ -799,9 +1093,9 @@ namespace ThinksquirrelSoftware.OpenGameConsole
 		/// <summary>
 		/// Run a console script.
 		/// </summary>
-		public static string Run(params string[] args)
+		public static string Get2(params string[] args)
 		{	
-#if RUN
+#if GET2
 			if (args.Length != 1)
 			{
 				return ConsoleErrors.InvalidArgumentError;
