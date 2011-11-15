@@ -480,8 +480,9 @@ namespace NDesk.Options {
 		public string OptionName {
 			get {return this.option;}
 		}
-
+#if !UNITY_WEBPLAYER
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+#endif
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
@@ -533,6 +534,7 @@ namespace NDesk.Options {
 			}
 		}
 
+#if !UNITY_WEBPLAYER
 		protected override void InsertItem (int index, Option item)
 		{
 			base.InsertItem (index, item);
@@ -574,7 +576,7 @@ namespace NDesk.Options {
 				throw;
 			}
 		}
-
+#endif
 		public new OptionSet Add (Option option)
 		{
 			base.Add (option);
