@@ -5,12 +5,6 @@ todo.txt
 
 .DS_Store
 
-*.txt.meta
+*.meta
 
-RuntimeConsole.tmproj.meta
-
-*.cs.meta
-
-COPYING.meta
-
-AUTHORS.meta
+!*.unity.meta
