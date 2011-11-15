@@ -1,31 +1,37 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using ThinksquirrelSoftware.OpenGameConsole;
 using ThinksquirrelSoftware.OpenGameConsole.Utility;
 
 public class OGCDownloader : MonoBehaviour
 {
-
 	public WWW www;
 	public bool prt;
 	private int percent;
+
+#if UNITY_EDITOR
+	[NonSerialized]
 	public OGCDLEditor downloader_EDITOR;
+#endif
 	
 	public void StartDownload(string url, bool print)
 	{
-#if !UNITY_EDITOR
-		StartCoroutine(Download(url, print));
-#else
+#if UNITY_EDITOR
 		www = new WWW(url);
 		this.prt = print;
 		downloader_EDITOR = new OGCDLEditor(this);	
+#else
+		StartCoroutine(Download(url, print));
 #endif
 	}
-	
+
+#if UNITY_EDITOR	
 	void OnDestroy()
 	{
 		downloader_EDITOR = null;
 	}
+#endif
 	
 	public IEnumerator Download(string url, bool print)
 	{

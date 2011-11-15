@@ -1,10 +1,10 @@
+#if UNITY_EDITOR
+
 using UnityEngine;
 using UnityEditor;
 using ThinksquirrelSoftware.OpenGameConsole;
 using ThinksquirrelSoftware.OpenGameConsole.Utility;
 using System.Collections;
-
-#if UNITY_EDITOR
 
 public class OGCDLEditor
 {
