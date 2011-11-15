@@ -9,4 +9,6 @@ todo.txt
 
 !*.unity.meta
 
+!*.ttf.meta
+
 OpenGameConsole Example Project/Scenes.meta
