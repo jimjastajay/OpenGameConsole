@@ -8,3 +8,5 @@ todo.txt
 todo.txt.meta
 
 RuntimeConsole.tmproj.meta
+
+*.cs.meta
