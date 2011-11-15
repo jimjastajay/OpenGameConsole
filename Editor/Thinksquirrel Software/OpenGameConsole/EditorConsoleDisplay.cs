@@ -243,38 +243,38 @@ public class EditorConsoleDisplay : EditorWindow
 	
 	public static void SaveEditorPrefs()
 	{
-		PlayerPrefs.SetFloat("OGC_Editor_bgColor_R", EditorConsoleDisplay.bgColor.r);
-		PlayerPrefs.SetFloat("OGC_Editor_bgColor_G", EditorConsoleDisplay.bgColor.g);
-		PlayerPrefs.SetFloat("OGC_Editor_bgColor_B", EditorConsoleDisplay.bgColor.b);
-		PlayerPrefs.SetFloat("OGC_Editor_bgColor_A", EditorConsoleDisplay.bgColor.a);
+		EditorPrefs.SetFloat("OGC_Editor_bgColor_R", EditorConsoleDisplay.bgColor.r);
+		EditorPrefs.SetFloat("OGC_Editor_bgColor_G", EditorConsoleDisplay.bgColor.g);
+		EditorPrefs.SetFloat("OGC_Editor_bgColor_B", EditorConsoleDisplay.bgColor.b);
+		EditorPrefs.SetFloat("OGC_Editor_bgColor_A", EditorConsoleDisplay.bgColor.a);
 
-		PlayerPrefs.SetFloat("OGC_Editor_fgColor_R", EditorConsoleDisplay.fgColor.r);
-		PlayerPrefs.SetFloat("OGC_Editor_fgColor_G", EditorConsoleDisplay.fgColor.g);
-		PlayerPrefs.SetFloat("OGC_Editor_fgColor_B", EditorConsoleDisplay.fgColor.b);
-		PlayerPrefs.SetFloat("OGC_Editor_fgColor_A", EditorConsoleDisplay.fgColor.a);
+		EditorPrefs.SetFloat("OGC_Editor_fgColor_R", EditorConsoleDisplay.fgColor.r);
+		EditorPrefs.SetFloat("OGC_Editor_fgColor_G", EditorConsoleDisplay.fgColor.g);
+		EditorPrefs.SetFloat("OGC_Editor_fgColor_B", EditorConsoleDisplay.fgColor.b);
+		EditorPrefs.SetFloat("OGC_Editor_fgColor_A", EditorConsoleDisplay.fgColor.a);
 
-		PlayerPrefs.SetInt("OGC_Editor_savedPrefs", 1);
+		EditorPrefs.SetInt("OGC_Editor_savedPrefs", 1);
 	}
 
 	public static void LoadEditorPrefs()
 	{
-		if (!PlayerPrefs.HasKey("OGC_savedPrefs"))
+		if (!EditorPrefs.HasKey("OGC_savedPrefs"))
 		{
 			SaveEditorPrefs();
 		}
 
 		EditorConsoleDisplay.bgColor = new Color(
-			PlayerPrefs.GetFloat("OGC_Editor_bgColor_R"),
-			PlayerPrefs.GetFloat("OGC_Editor_bgColor_G"),
-			PlayerPrefs.GetFloat("OGC_Editor_bgColor_B"),
-			PlayerPrefs.GetFloat("OGC_Editor_bgColor_A")
+			EditorPrefs.GetFloat("OGC_Editor_bgColor_R"),
+			EditorPrefs.GetFloat("OGC_Editor_bgColor_G"),
+			EditorPrefs.GetFloat("OGC_Editor_bgColor_B"),
+			EditorPrefs.GetFloat("OGC_Editor_bgColor_A")
 			);
 
 		EditorConsoleDisplay.fgColor = new Color(
-			PlayerPrefs.GetFloat("OGC_Editor_fgColor_R"),
-			PlayerPrefs.GetFloat("OGC_Editor_fgColor_G"),
-			PlayerPrefs.GetFloat("OGC_Editor_fgColor_B"),
-			PlayerPrefs.GetFloat("OGC_Editor_fgColor_A")
+			EditorPrefs.GetFloat("OGC_Editor_fgColor_R"),
+			EditorPrefs.GetFloat("OGC_Editor_fgColor_G"),
+			EditorPrefs.GetFloat("OGC_Editor_fgColor_B"),
+			EditorPrefs.GetFloat("OGC_Editor_fgColor_A")
 			);
 	}
 }
