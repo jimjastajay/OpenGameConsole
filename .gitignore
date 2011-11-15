@@ -8,3 +8,5 @@ todo.txt
 *.meta
 
 !*.unity.meta
+
+OpenGameConsole Example Project/Scenes.meta
