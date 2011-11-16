@@ -10,3 +10,5 @@ todo.txt
 !*.unity.meta
 
 !*.ttf.meta
+
+OGC Example Project/*
